@@ -4,6 +4,7 @@
 * Verify all React components are functional and use hooks properly.
 * Check that backend routes have proper error handling and return consistent JSON structures (e.g., `{ success: true, data: ... }`).
 * Validate that database queries are parameterized to prevent SQL injection.
+* Ensure Gemini API prompt parameters are well-optimized for a consistent pixel art style, and that the sharp post-process pass correctly locks output to the `style.md` palette and a fixed sprite canvas.
 
 ## 2. Automated Testing Protocols
 * Frontend: Vitest + React Testing Library for core component rendering (e.g., ensuring the Rack maps over car arrays correctly).
@@ -12,5 +13,5 @@
 ## 3. Definition of Done (DoD)
 * Feature is fully functional locally.
 * Code passes linting (`eslint`) and formatting (`prettier`).
-* Pixelation algorithm output has been visually verified for correct "retro" scaling (no blurred edges).
+* Pixelation output has been visually verified for correct "retro" scaling (no blurred edges), clean background removal, and consistent palette/sizing across different source photos.
 * Documentation (this file set) is updated if architecture changed.

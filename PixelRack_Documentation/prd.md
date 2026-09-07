@@ -9,7 +9,7 @@ Hot Wheels collectors, die-cast car enthusiasts, and hobbyists who appreciate pi
 ## 3. Feature MVP Checklist
 * User Authentication: Sign up, log in, and secure session management.
 * Image Upload: Users can upload photos of their physical Hot Wheels.
-* Pixelation Engine: Backend service processes the image into a 16-bit/8-bit style pixel art sprite.
+* Pixelation Engine: Backend service processes the image into a 16-bit/8-bit style pixel art sprite via a Gemini API + sharp hybrid pipeline (AI normalizes background/angle/style, sharp locks the final palette and sprite dimensions).
 * Core Display (The Rack): A default virtual wooden rack to display the pixelated cars.
 * Alternative Environments: At least two unlocked environments (e.g., Virtual Garage, Japanese Convenience Store).
 * Collection Management: Ability to name, categorize, and delete cars from the digital rack.

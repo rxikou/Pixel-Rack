@@ -9,7 +9,9 @@
 ## 2. Backend
 * Runtime Environment: Node.js
 * Web Framework: Express.js
-* Image Processing: `jimp` or `sharp` (Node.js libraries) for downscaling, color quantization, and pixelation algorithms.
+* Image Processing (hybrid pipeline):
+  * `@google/genai` (Gemini API) generates a background-removed, style-normalized pixel art render from the source photo, using a fixed prompt template and the palette in `style.md`.
+  * `sharp` post-processes the Gemini output: quantizes colors to the locked palette and resizes/crops to a fixed canvas so every sprite is pixel-perfect and grid-aligned regardless of AI output variance.
 * Authentication: JWT (JSON Web Tokens) with bcrypt for password hashing.
 
 ## 3. Database

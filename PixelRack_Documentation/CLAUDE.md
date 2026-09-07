@@ -13,7 +13,7 @@ You are assisting in the development of PixelRack, a hobbyist web application fo
 * Frontend: Functional React components, Hooks, strict PropTypes or TypeScript interfaces (if adopted later).
 * Backend: Express REST API, modular route controllers, async/await error handling.
 * General: Standard JS/ES6+ syntax. Avoid class components.
-* Pixelation Logic: Execute pixelation processing on the backend using libraries like `jimp` or `sharp` to avoid frontend performance bottlenecks.
+* Pixelation Logic: Execute pixelation processing on the backend as a two-stage pipeline - the `@google/genai` SDK (Gemini API) normalizes background, angle, and style per a fixed prompt using the palette in `style.md`, then `sharp` deterministically quantizes colors to that palette and resizes to a fixed canvas for pixel-perfect grid alignment.
 
 ## 4. Memory Anchoring
 * Always refer to the database schema in `flow.md` before suggesting backend changes.

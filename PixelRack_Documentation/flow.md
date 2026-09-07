@@ -4,7 +4,7 @@
 1. Landing Page: Introduction to PixelRack, pixel art hero image, Login/Register CTAs.
 2. Dashboard (My Rack): Primary view showing the user's pixelated collection on a shelf.
 3. Upload Modal: Drag-and-drop zone for physical car photos.
-4. Processing View: Brief loading state while the backend pixelates the image.
+4. Processing View: Brief loading state while the backend pixelates the image via the Gemini API + sharp pipeline.
 5. Environment Selector: Tab or dropdown to switch the background (e.g., 7-11 Japan, Cyberpunk City).
 
 ## 2. Database Schema (PostgreSQL)
@@ -34,8 +34,8 @@ Table: Environments
 ## 3. API Request Flow (Upload)
 1. Client POSTs image payload to `/api/cars/upload`.
 2. Express backend validates payload and auth token.
-3. Express passes image to processing utility (`sharp`/`jimp`).
-4. Utility scales down image, applies color palette restrictions, scales back up (nearest neighbor).
+3. Express calls the Gemini API via `@google/genai` with the original photo and a fixed prompt (referencing the `style.md` palette) instructing it to remove the background and render the car as a normalized retro pixel art sprite.
+4. Express passes the Gemini output to `sharp`, which quantizes colors to the locked palette and resizes/crops to a fixed canvas so the sprite is pixel-perfect and grid-aligned.
 5. Backend uploads final image to cloud storage (e.g., AWS S3).
 6. Backend saves image URLs and metadata to PostgreSQL.
 7. Backend returns new Car object to React frontend.
