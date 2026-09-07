@@ -17,12 +17,12 @@
   "license": "ISC",
   "dependencies": {
     "@google/genai": "^2.21.0",
+    "@prisma/adapter-neon": "^7.10.0",
     "@prisma/client": "^7.10.0",
-    "bcrypt": "^6.0.0",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
-    "jsonwebtoken": "^9.0.3",
+    "jose": "^6.2.12",
     "multer": "^2.3.0",
     "sharp": "^0.35.4"
   },

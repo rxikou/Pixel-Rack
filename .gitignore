@@ -32,3 +32,4 @@ out/
 server/temp_uploads/*
 !server/temp_uploads/.gitkeep
 *.log
+.neon

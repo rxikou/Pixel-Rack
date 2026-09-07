@@ -1,8 +1,9 @@
+import './lib/loadEnv.js'
+
 import express from 'express'
 import cors from 'cors'
-import 'dotenv/config'
 
-import authRoutes from './routes/auth.routes.js'
+import userRoutes from './routes/user.routes.js'
 import carRoutes from './routes/car.routes.js'
 import environmentRoutes from './routes/environment.routes.js'
 import { errorHandler } from './middleware/errorHandler.js'
@@ -16,7 +17,7 @@ app.get('/api/health', (req, res) => {
   res.json({ success: true, data: { status: 'ok' } })
 })
 
-app.use('/api/auth', authRoutes)
+app.use('/api/users', userRoutes)
 app.use('/api/cars', carRoutes)
 app.use('/api/environments', environmentRoutes)
 

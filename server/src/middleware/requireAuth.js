@@ -1,6 +1,16 @@
-import jwt from 'jsonwebtoken'
+import { createRemoteJWKSet, jwtVerify } from 'jose'
 
-export function requireAuth(req, res, next) {
+// Built lazily so the module can be imported before env vars are loaded.
+let jwks = null
+
+function getJwks() {
+  if (!jwks) {
+    jwks = createRemoteJWKSet(new URL(process.env.NEON_AUTH_JWKS_URL))
+  }
+  return jwks
+}
+
+export async function requireAuth(req, res, next) {
   const header = req.headers.authorization
   const token = header?.startsWith('Bearer ') ? header.slice(7) : null
 
@@ -9,7 +19,10 @@ export function requireAuth(req, res, next) {
   }
 
   try {
-    req.user = jwt.verify(token, process.env.JWT_SECRET)
+    const { payload } = await jwtVerify(token, getJwks(), {
+      issuer: new URL(process.env.NEON_AUTH_BASE_URL).origin,
+    })
+    req.user = { id: payload.sub, email: payload.email }
     next()
   } catch {
     res.status(401).json({ success: false, error: 'Invalid or expired token' })

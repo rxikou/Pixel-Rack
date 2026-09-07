@@ -12,10 +12,10 @@ function LandingPage() {
       </p>
 
       <div className="flex gap-3">
-        <Link to="/dashboard">
+        <Link to="/login">
           <Button variant="secondary">Log In</Button>
         </Link>
-        <Link to="/dashboard">
+        <Link to="/register">
           <Button variant="primary">Register</Button>
         </Link>
       </div>

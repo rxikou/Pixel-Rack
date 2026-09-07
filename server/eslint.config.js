@@ -6,7 +6,7 @@ export default [
   { ignores: ['node_modules', 'temp_uploads', 'prisma/migrations'] },
   js.configs.recommended,
   {
-    files: ['**/*.js'],
+    files: ['**/*.js', '**/*.mjs'],
     languageOptions: {
       ecmaVersion: 2022,
       sourceType: 'module',
