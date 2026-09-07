@@ -5,7 +5,7 @@ import PixelCarIcon from './PixelCarIcon'
 
 const PLACEHOLDER_COLORS = ['#f97316', '#38bdf8', '#f472b6', '#4ade80', '#facc15']
 
-function UploadModal({ onClose, onUpload }) {
+function UploadPanel({ onUpload }) {
   const [file, setFile] = useState(null)
   const [previewUrl, setPreviewUrl] = useState('')
   const [name, setName] = useState('')
@@ -23,28 +23,29 @@ function UploadModal({ onClose, onUpload }) {
   useEffect(() => {
     if (!isProcessing) return undefined
 
+    let current = 0
     const interval = setInterval(() => {
-      setProgress((prev) => {
-        if (prev >= 100) {
-          clearInterval(interval)
-          return 100
-        }
-        return prev + 4
-      })
+      current += 4
+      setProgress(current)
+
+      if (current >= 100) {
+        clearInterval(interval)
+        onUpload({
+          id: crypto.randomUUID(),
+          name,
+          series: series || 'Uncategorized',
+          color: spriteColor,
+        })
+        setIsProcessing(false)
+        setFile(null)
+        setPreviewUrl('')
+        setName('')
+        setSeries('')
+        setProgress(0)
+      }
     }, 50)
     return () => clearInterval(interval)
-  }, [isProcessing])
-
-  useEffect(() => {
-    if (progress < 100 || !isProcessing) return
-
-    onUpload({
-      id: crypto.randomUUID(),
-      name,
-      series: series || 'Uncategorized',
-      color: spriteColor,
-    })
-  }, [progress, isProcessing, name, series, spriteColor, onUpload])
+  }, [isProcessing, name, series, spriteColor, onUpload])
 
   function handleFileChange(e) {
     const selected = e.target.files?.[0]
@@ -64,36 +65,41 @@ function UploadModal({ onClose, onUpload }) {
   }
 
   return (
-    <div className="fixed inset-0 z-10 flex items-center justify-center bg-bg-primary/80 px-4">
-      <div className="w-full max-w-sm border-2 border-accent-blue bg-bg-container p-6">
-        <h2 className="mb-4 font-pixel text-xs text-accent-blue">Upload Car</h2>
+    <div id="upload-panel" className="flex flex-col gap-4 border-2 border-bg-container bg-bg-container/40 p-4">
+      <h2 className="font-pixel text-base text-accent-blue">Hot Wheels Pixelator</h2>
+
+      <div>
+        <p className="mb-2 font-mono text-xs uppercase tracking-wide text-text-secondary">
+          Active Transformation
+        </p>
 
         {isProcessing ? (
-          <div className="flex flex-col items-center gap-4 py-2">
-            <div className="flex items-center gap-3">
+          <div className="flex flex-col items-center gap-3 border-2 border-accent-blue bg-bg-primary p-3">
+            <p className="font-mono text-xs text-text-secondary">
+              Transforming "{name}"
+            </p>
+            <div className="flex items-center gap-2">
               <img
                 src={previewUrl}
                 alt="Original upload"
-                className="h-20 w-20 border-2 border-bg-primary object-cover"
+                className="h-16 w-16 border-2 border-bg-container object-cover"
               />
               <span className="text-accent-blue">&#8594;</span>
-              <div className="flex h-20 w-20 items-center justify-center border-2 border-accent-blue bg-bg-primary">
-                <PixelCarIcon color={spriteColor} className="h-10 w-16" />
+              <div className="flex h-16 w-16 items-center justify-center border-2 border-accent-blue bg-bg-container">
+                <PixelCarIcon color={spriteColor} className="h-8 w-14" />
               </div>
             </div>
-            <div className="w-full border-2 border-bg-primary bg-bg-primary">
+            <div className="w-full border-2 border-bg-container bg-bg-container">
               <div
-                className="h-3 bg-accent-blue transition-all"
+                className="h-2 bg-accent-blue transition-all"
                 style={{ width: `${progress}%` }}
               />
             </div>
-            <p className="font-mono text-xs text-text-secondary">
-              Pixelating "{name}"... {progress}%
-            </p>
+            <p className="font-mono text-xs text-text-secondary">{progress}%</p>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-            <label className="cursor-pointer border-2 border-dashed border-text-secondary p-6 text-center font-mono text-xs text-text-secondary hover:border-accent-blue">
+          <form onSubmit={handleSubmit} className="flex flex-col gap-2">
+            <label className="cursor-pointer border-2 border-dashed border-text-secondary p-4 text-center font-mono text-xs text-text-secondary hover:border-accent-blue">
               {file ? file.name : 'Drag & drop a photo, or click to choose'}
               <input
                 type="file"
@@ -103,7 +109,6 @@ function UploadModal({ onClose, onUpload }) {
                 className="hidden"
               />
             </label>
-
             <input
               type="text"
               placeholder="Car name"
@@ -119,25 +124,34 @@ function UploadModal({ onClose, onUpload }) {
               onChange={(e) => setSeries(e.target.value)}
               className="border-2 border-bg-primary bg-bg-primary px-3 py-2 font-mono text-sm text-text-primary outline-none focus:border-accent-blue"
             />
-
-            <div className="mt-2 flex justify-end gap-2">
-              <Button type="button" variant="secondary" onClick={onClose}>
-                Cancel
-              </Button>
-              <Button type="submit" variant="primary">
-                Upload
-              </Button>
-            </div>
+            <Button type="submit" variant="primary" className="w-full">
+              Upload &amp; Transform
+            </Button>
           </form>
+        )}
+      </div>
+
+      <div>
+        <p className="mb-2 font-mono text-xs uppercase tracking-wide text-text-secondary">
+          Queue
+        </p>
+        {isProcessing ? (
+          <div className="flex items-center justify-between border-2 border-bg-container bg-bg-primary px-2 py-1.5 font-mono text-xs text-text-secondary">
+            <span className="truncate">Transforming "{name}"...</span>
+            <span>{progress}%</span>
+          </div>
+        ) : (
+          <p className="font-mono text-xs text-text-secondary">
+            No transformations queued.
+          </p>
         )}
       </div>
     </div>
   )
 }
 
-UploadModal.propTypes = {
-  onClose: PropTypes.func.isRequired,
+UploadPanel.propTypes = {
   onUpload: PropTypes.func.isRequired,
 }
 
-export default UploadModal
+export default UploadPanel

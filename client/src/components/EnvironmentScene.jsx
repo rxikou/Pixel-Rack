@@ -2,16 +2,13 @@ import PropTypes from 'prop-types'
 
 function RackScene() {
   return (
-    <div className="pointer-events-none absolute inset-0 overflow-hidden opacity-40">
-      <div className="absolute inset-x-0 top-0 h-2 bg-amber-950" />
-      {[1, 2, 3].map((row) => (
-        <div
-          key={row}
-          className="absolute inset-x-0 h-1 bg-amber-950"
-          style={{ top: `${row * 25}%` }}
-        />
-      ))}
-    </div>
+    <div
+      className="pointer-events-none absolute inset-0 opacity-30"
+      style={{
+        backgroundImage:
+          'repeating-linear-gradient(90deg, rgba(0,0,0,0.25) 0px, rgba(0,0,0,0.25) 1px, transparent 1px, transparent 7px)',
+      }}
+    />
   )
 }
 

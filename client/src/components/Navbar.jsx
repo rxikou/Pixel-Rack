@@ -1,46 +1,54 @@
-import { Link } from 'react-router-dom'
-import PropTypes from 'prop-types'
+import { Link, useLocation } from 'react-router-dom'
 import logo from '../assets/pixelrack-logo.png'
 
-function Navbar({ onUploadClick }) {
+const NAV_LINKS = [
+  { to: '/', label: 'Home' },
+  { to: '/dashboard', label: 'My Rack' },
+]
+
+function Navbar() {
+  const { pathname } = useLocation()
+
   return (
-    <header className="flex flex-wrap items-center justify-between gap-4 border-b-2 border-bg-container px-6 py-3">
+    <header className="sticky top-0 z-40 flex flex-wrap items-center justify-between gap-4 border-b-2 border-accent-blue/50 bg-bg-container/90 px-6 py-3 shadow-[0_2px_20px_rgba(56,189,248,0.15)] backdrop-blur">
       <div className="flex items-center gap-6">
         <Link to="/">
           <img src={logo} alt="PixelRack" className="pixelated h-16" />
         </Link>
-        <nav className="flex gap-4 font-mono text-xs text-text-secondary">
-          <Link to="/" className="hover:text-accent-blue">
-            Home
-          </Link>
-          <Link to="/dashboard" className="hover:text-accent-blue">
-            My Rack
-          </Link>
-          <button
-            type="button"
-            onClick={onUploadClick}
-            className="cursor-pointer hover:text-accent-blue"
+        <nav className="flex gap-6 font-mono text-sm font-medium uppercase tracking-wide">
+          {NAV_LINKS.map((link) => (
+            <Link
+              key={link.to}
+              to={link.to}
+              className={
+                pathname === link.to
+                  ? 'border-b-2 border-accent-blue pb-1 text-accent-blue'
+                  : 'border-b-2 border-transparent pb-1 text-text-secondary hover:text-accent-blue'
+              }
+            >
+              {link.label}
+            </Link>
+          ))}
+          <a
+            href="#upload-panel"
+            className="border-b-2 border-transparent pb-1 text-text-secondary hover:text-accent-blue"
           >
             Upload
-          </button>
+          </a>
         </nav>
       </div>
 
-      <div className="flex items-center gap-3 font-mono text-xs text-text-secondary">
+      <div className="flex items-center gap-3 font-mono text-sm text-text-secondary">
         <span className="relative">
-          <span aria-hidden="true">&#9679;</span>
-          <span className="absolute -right-1.5 -top-1.5 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-accent-pink text-[9px] text-bg-primary">
+          <span aria-hidden="true" className="text-lg">&#9679;</span>
+          <span className="absolute -right-1.5 -top-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-accent-pink text-[10px] text-bg-primary">
             2
           </span>
         </span>
-        <span>Guest</span>
+        <span className="border-2 border-bg-primary bg-bg-primary px-3 py-1.5">Guest</span>
       </div>
     </header>
   )
-}
-
-Navbar.propTypes = {
-  onUploadClick: PropTypes.func,
 }
 
 export default Navbar

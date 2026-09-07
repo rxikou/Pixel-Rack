@@ -14,7 +14,7 @@
 * Text Secondary: #94A3B8
 
 ## 3. Typography
-* Headings: 'Press Start 2P' (or similar pixel font) for titles and primary labels.
+* Headings: 'Jersey 10' (pixel font) for titles and primary labels.
 * Body: 'Inter' or 'Roboto Mono' for readability in dense information areas (like settings or stats).
 
 ## 4. Spacing & Layout

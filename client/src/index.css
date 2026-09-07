@@ -1,7 +1,7 @@
 @import 'tailwindcss';
 
 @theme {
-  --font-pixel: 'Press Start 2P', system-ui, sans-serif;
+  --font-pixel: 'Jersey 10', system-ui, sans-serif;
   --font-mono: 'Roboto Mono', ui-monospace, monospace;
 
   --color-bg-primary: #0f172a;
@@ -15,9 +15,18 @@
   --spacing: 4px;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   margin: 0;
-  background: var(--color-bg-primary);
+  background-color: var(--color-bg-primary);
+  background-image:
+    linear-gradient(rgba(56, 189, 248, 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(56, 189, 248, 0.07) 1px, transparent 1px);
+  background-size: 28px 28px;
+  background-attachment: fixed;
   color: var(--color-text-primary);
   font-family: var(--font-mono);
 }
