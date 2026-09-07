@@ -1,0 +1,27 @@
+@import 'tailwindcss';
+
+@theme {
+  --font-pixel: 'Press Start 2P', system-ui, sans-serif;
+  --font-mono: 'Roboto Mono', ui-monospace, monospace;
+
+  --color-bg-primary: #0f172a;
+  --color-bg-container: #1e293b;
+  --color-accent-blue: #38bdf8;
+  --color-accent-pink: #f472b6;
+  --color-accent-green: #4ade80;
+  --color-text-primary: #f8fafc;
+  --color-text-secondary: #94a3b8;
+
+  --spacing: 4px;
+}
+
+body {
+  margin: 0;
+  background: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  font-family: var(--font-mono);
+}
+
+.pixelated {
+  image-rendering: pixelated;
+}

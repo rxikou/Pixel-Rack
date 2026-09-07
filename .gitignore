@@ -1,0 +1,34 @@
+# .gitignore
+
+# Node modules
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Build output
+client/dist/
+server/build/
+.next/
+out/
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# IDE and OS files
+.DS_Store
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
+
+# Temporary image processing files
+server/temp_uploads/*
+!server/temp_uploads/.gitkeep
+*.log

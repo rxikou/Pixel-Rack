@@ -1,0 +1,43 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(uuid())
+  username     String   @unique
+  email        String   @unique
+  passwordHash String   @map("password_hash")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  cars Car[]
+
+  @@map("users")
+}
+
+model Car {
+  id               String   @id @default(uuid())
+  userId           String   @map("user_id")
+  originalImageUrl String   @map("original_image_url")
+  pixelImageUrl    String   @map("pixel_image_url")
+  name             String
+  series           String?
+  createdAt        DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("cars")
+}
+
+model Environment {
+  id            String  @id @default(uuid())
+  name          String
+  backgroundUrl String  @map("background_url")
+  isPremium     Boolean @default(false) @map("is_premium")
+
+  @@map("environments")
+}
