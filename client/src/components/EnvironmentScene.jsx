@@ -3,10 +3,14 @@ import PropTypes from 'prop-types'
 function RackScene() {
   return (
     <div
-      className="pointer-events-none absolute inset-0 opacity-30"
+      className="pointer-events-none absolute inset-0 opacity-40"
       style={{
-        backgroundImage:
-          'repeating-linear-gradient(90deg, rgba(0,0,0,0.25) 0px, rgba(0,0,0,0.25) 1px, transparent 1px, transparent 7px)',
+        // Irregular stripe widths read as wood grain rather than a flat screen.
+        backgroundImage: [
+          'repeating-linear-gradient(90deg, rgba(0,0,0,0.30) 0px, rgba(0,0,0,0.30) 1px, transparent 1px, transparent 6px)',
+          'repeating-linear-gradient(90deg, rgba(0,0,0,0.16) 0px, rgba(0,0,0,0.16) 2px, transparent 2px, transparent 17px)',
+          'repeating-linear-gradient(90deg, rgba(255,240,200,0.09) 0px, rgba(255,240,200,0.09) 1px, transparent 1px, transparent 29px)',
+        ].join(','),
       }}
     />
   )

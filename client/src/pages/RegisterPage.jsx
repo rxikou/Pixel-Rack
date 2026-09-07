@@ -19,6 +19,16 @@ function RegisterPage() {
     setError('')
     setIsSubmitting(true)
     try {
+      // Checked before the auth account is created, so a taken username
+      // cannot leave the user with credentials but no profile.
+      const { available } = await apiFetch(
+        `/api/users/username-available?username=${encodeURIComponent(username)}`,
+      )
+      if (!available) {
+        setError('That username is already taken')
+        return
+      }
+
       await signUp(email, password, username)
       await apiFetch('/api/users/me', {
         method: 'PUT',
@@ -42,7 +52,9 @@ function RegisterPage() {
         onSubmit={handleSubmit}
         className="flex w-full max-w-sm flex-col gap-3 border-2 border-bg-container bg-bg-container/40 p-6"
       >
-        <h1 className="font-pixel text-base text-accent-blue">Register</h1>
+        <h1 className="font-pixel text-xl uppercase tracking-wide text-accent-blue">
+          Register
+        </h1>
 
         {error && <p className="font-mono text-xs text-accent-pink">{error}</p>}
 

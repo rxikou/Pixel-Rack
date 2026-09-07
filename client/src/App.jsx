@@ -3,6 +3,7 @@ import LandingPage from './pages/LandingPage'
 import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
 import DashboardPage from './pages/DashboardPage'
+import BackgroundFX from './components/BackgroundFX'
 import PageFrame from './components/PageFrame'
 import ProtectedRoute from './components/ProtectedRoute'
 import { AuthProvider } from './context/AuthContext'
@@ -11,6 +12,7 @@ function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
+        <BackgroundFX />
         <PageFrame />
         <Routes>
           <Route path="/" element={<LandingPage />} />

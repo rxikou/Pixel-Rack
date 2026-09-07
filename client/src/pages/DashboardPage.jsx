@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import Navbar from '../components/Navbar'
+import Footer from '../components/Footer'
 import Rack from '../components/Rack'
 import RackHeader from '../components/RackHeader'
 import EnvironmentGallery from '../components/EnvironmentGallery'
@@ -20,13 +21,20 @@ function DashboardPage() {
   const visibleCars = useMemo(() => {
     let result = cars
     if (seriesFilter !== 'all') {
-      result = result.filter((car) => (car.series || 'Uncategorized') === seriesFilter)
+      result = result.filter(
+        (car) => (car.series || 'Uncategorized') === seriesFilter,
+      )
     }
     if (sort === 'name') {
       result = [...result].sort((a, b) => a.name.localeCompare(b.name))
     }
     return result
   }, [cars, seriesFilter, sort])
+
+  const shelfCount = useMemo(
+    () => new Set(visibleCars.map((car) => car.series || 'Uncategorized')).size,
+    [visibleCars],
+  )
 
   function handleDelete(id) {
     setCars((prev) => prev.filter((car) => car.id !== id))
@@ -39,26 +47,35 @@ function DashboardPage() {
   const activeEnvironment = environments.find((env) => env.id === environmentId)
 
   return (
-    <div className="min-h-screen">
+    <div className="flex min-h-screen flex-col">
       <Navbar />
 
-      <main className="mx-auto grid max-w-6xl grid-cols-1 gap-6 px-6 py-8 lg:grid-cols-[300px_1fr]">
+      <main className="mx-auto grid w-full max-w-6xl flex-1 grid-cols-1 gap-6 px-6 py-8 lg:grid-cols-[320px_1fr]">
         <aside>
           <UploadPanel onUpload={handleUpload} />
         </aside>
 
-        <section className="flex flex-col gap-4">
-          <RackHeader
-            rackName={activeEnvironment?.name ?? ''}
-            carCount={visibleCars.length}
-            sort={sort}
-            onSortChange={setSort}
-            seriesFilter={seriesFilter}
-            seriesOptions={seriesOptions}
-            onFilterChange={setSeriesFilter}
-          />
+        <section className="flex flex-col gap-6">
+          <div className="border-2 border-accent-blue/25 bg-bg-container/40 p-4">
+            <RackHeader
+              rackName={activeEnvironment?.name ?? ''}
+              carCount={visibleCars.length}
+              shelfCount={shelfCount}
+              sort={sort}
+              onSortChange={setSort}
+              seriesFilter={seriesFilter}
+              seriesOptions={seriesOptions}
+              onFilterChange={setSeriesFilter}
+            />
 
-          <Rack cars={visibleCars} environmentId={environmentId} onDelete={handleDelete} />
+            <div className="pt-4">
+              <Rack
+                cars={visibleCars}
+                environmentId={environmentId}
+                onDelete={handleDelete}
+              />
+            </div>
+          </div>
 
           <EnvironmentGallery
             environments={environments}
@@ -67,6 +84,8 @@ function DashboardPage() {
           />
         </section>
       </main>
+
+      <Footer />
     </div>
   )
 }

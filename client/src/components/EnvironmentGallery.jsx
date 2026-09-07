@@ -1,58 +1,57 @@
 import PropTypes from 'prop-types'
-
-const PREVIEW_STYLES = {
-  rack: 'bg-gradient-to-b from-amber-700 to-amber-950',
-  garage: 'bg-gradient-to-b from-slate-500 to-slate-800',
-  konbini: 'bg-gradient-to-b from-emerald-700 to-sky-950',
-}
+import Panel from './Panel'
+import EnvironmentThumb from './EnvironmentThumb'
 
 function EnvironmentGallery({ environments, activeId, onSelect }) {
   return (
-    <div>
-      <p className="mb-2 font-pixel text-sm text-text-secondary">
-        Virtual Settings &amp; Unlockables
-      </p>
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+    <Panel title="Virtual Settings & Unlockables">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {environments.map((env) => {
           const isActive = env.id === activeId
+          const locked = Boolean(env.isPremium)
+
           return (
-            <div
+            <button
               key={env.id}
-              className={`flex flex-col border-2 ${isActive ? 'border-accent-blue' : 'border-bg-container'}`}
+              type="button"
+              disabled={locked}
+              aria-pressed={isActive}
+              onClick={() => onSelect(env.id)}
+              title={
+                locked ? 'Premium environments are not available yet' : undefined
+              }
+              className={`flex flex-col overflow-hidden border-2 text-left transition-colors ${
+                locked
+                  ? 'cursor-not-allowed border-bg-container opacity-60'
+                  : 'cursor-pointer'
+              } ${
+                isActive
+                  ? 'border-accent-blue shadow-[0_0_12px_rgba(56,189,248,0.35)]'
+                  : !locked && 'border-bg-container hover:border-accent-blue/60'
+              }`}
             >
-              <div className={`h-16 w-full ${PREVIEW_STYLES[env.id]}`} />
-              <div className="flex items-center justify-between gap-2 bg-bg-container/60 px-3 py-2">
-                <span className="truncate font-mono text-xs text-text-primary">
+              <EnvironmentThumb environmentId={env.id} />
+              <div className="flex w-full items-center justify-between gap-2 bg-bg-container/80 px-3 py-2">
+                <span className="truncate font-mono text-xs uppercase tracking-wide text-text-primary">
                   {env.name}
                 </span>
-                {env.isPremium ? (
-                  <button
-                    type="button"
-                    disabled
-                    className="cursor-not-allowed border border-text-secondary px-2 py-1 font-mono text-[10px] uppercase text-text-secondary opacity-60"
-                    title="Premium environments are not available yet"
-                  >
-                    Unlock
-                  </button>
-                ) : (
-                  <button
-                    type="button"
-                    onClick={() => onSelect(env.id)}
-                    className={`cursor-pointer border px-2 py-1 font-mono text-[10px] uppercase ${
-                      isActive
-                        ? 'border-accent-blue text-accent-blue'
-                        : 'border-text-secondary text-text-secondary hover:border-accent-blue hover:text-accent-blue'
-                    }`}
-                  >
-                    {isActive ? 'Selected' : 'Select'}
-                  </button>
-                )}
+                <span
+                  className={`shrink-0 font-mono text-[10px] uppercase tracking-wide ${
+                    locked
+                      ? 'text-text-secondary/60'
+                      : isActive
+                        ? 'text-accent-blue'
+                        : 'text-text-secondary'
+                  }`}
+                >
+                  {locked ? 'Unlock' : isActive ? 'Selected' : 'Select'}
+                </span>
               </div>
-            </div>
+            </button>
           )
         })}
       </div>
-    </div>
+    </Panel>
   )
 }
 

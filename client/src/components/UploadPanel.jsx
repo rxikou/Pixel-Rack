@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
-import Button from './Button'
+import BracketButton from './BracketButton'
+import Panel from './Panel'
 import PixelCarIcon from './PixelCarIcon'
 
 const PLACEHOLDER_COLORS = ['#f97316', '#38bdf8', '#f472b6', '#4ade80', '#facc15']
@@ -65,37 +66,57 @@ function UploadPanel({ onUpload }) {
   }
 
   return (
-    <div id="upload-panel" className="flex flex-col gap-4 border-2 border-bg-container bg-bg-container/40 p-4">
-      <h2 className="font-pixel text-base text-accent-blue">Hot Wheels Pixelator</h2>
-
-      <div>
-        <p className="mb-2 font-mono text-xs uppercase tracking-wide text-text-secondary">
+    <Panel
+      id="upload-panel"
+      title="Hot Wheels Pixelator"
+      bodyClassName="flex flex-col gap-4 p-3"
+    >
+      <div className="flex flex-col gap-2">
+        <p className="font-mono text-xs uppercase tracking-wide text-text-secondary">
           Active Transformation
         </p>
 
         {isProcessing ? (
-          <div className="flex flex-col items-center gap-3 border-2 border-accent-blue bg-bg-primary p-3">
-            <p className="font-mono text-xs text-text-secondary">
+          <div className="flex flex-col gap-3 border-2 border-accent-blue/50 bg-bg-primary p-3">
+            <p className="truncate font-mono text-xs text-text-secondary">
               Transforming "{name}"
             </p>
-            <div className="flex items-center gap-2">
-              <img
-                src={previewUrl}
-                alt="Original upload"
-                className="h-16 w-16 border-2 border-bg-container object-cover"
-              />
-              <span className="text-accent-blue">&#8594;</span>
-              <div className="flex h-16 w-16 items-center justify-center border-2 border-accent-blue bg-bg-container">
-                <PixelCarIcon color={spriteColor} className="h-8 w-14" />
+
+            <div className="flex items-center justify-center gap-3">
+              <div className="flex flex-col items-center gap-1">
+                <img
+                  src={previewUrl}
+                  alt="Original upload"
+                  className="h-20 w-20 border-2 border-text-secondary/40 object-cover"
+                />
+                <span className="font-mono text-[10px] uppercase tracking-wide text-text-secondary">
+                  Original
+                </span>
+              </div>
+
+              <span aria-hidden="true" className="pb-4 text-xl text-accent-blue">
+                &#10142;
+              </span>
+
+              <div className="flex flex-col items-center gap-1">
+                <div className="flex h-20 w-20 items-center justify-center border-2 border-accent-blue bg-bg-container">
+                  <PixelCarIcon color={spriteColor} className="h-10 w-16" />
+                </div>
+                <span className="font-mono text-[10px] uppercase tracking-wide text-accent-blue">
+                  Pixel Sprite
+                </span>
               </div>
             </div>
-            <div className="w-full border-2 border-bg-container bg-bg-container">
+
+            <div className="relative h-5 w-full border-2 border-bg-container bg-bg-container">
               <div
-                className="h-2 bg-accent-blue transition-all"
+                className="h-full bg-accent-blue transition-all"
                 style={{ width: `${progress}%` }}
               />
+              <span className="absolute inset-0 flex items-center justify-center font-mono text-[11px] font-bold text-text-primary">
+                {progress}%
+              </span>
             </div>
-            <p className="font-mono text-xs text-text-secondary">{progress}%</p>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="flex flex-col gap-2">
@@ -124,21 +145,21 @@ function UploadPanel({ onUpload }) {
               onChange={(e) => setSeries(e.target.value)}
               className="border-2 border-bg-primary bg-bg-primary px-3 py-2 font-mono text-sm text-text-primary outline-none focus:border-accent-blue"
             />
-            <Button type="submit" variant="primary" className="w-full">
+            <BracketButton type="submit" className="mt-1 w-full py-2">
               Upload &amp; Transform
-            </Button>
+            </BracketButton>
           </form>
         )}
       </div>
 
-      <div>
-        <p className="mb-2 font-mono text-xs uppercase tracking-wide text-text-secondary">
-          Queue
+      <div className="flex flex-col gap-2 border-t-2 border-accent-blue/20 pt-3">
+        <p className="font-mono text-xs uppercase tracking-wide text-text-secondary">
+          Queue Transformations
         </p>
         {isProcessing ? (
-          <div className="flex items-center justify-between border-2 border-bg-container bg-bg-primary px-2 py-1.5 font-mono text-xs text-text-secondary">
-            <span className="truncate">Transforming "{name}"...</span>
-            <span>{progress}%</span>
+          <div className="flex items-center justify-between gap-2 border-2 border-bg-container bg-bg-primary px-2 py-1.5 font-mono text-xs text-text-secondary">
+            <span className="truncate">Transforming "{name}"</span>
+            <span className="shrink-0 text-accent-blue">{progress}%</span>
           </div>
         ) : (
           <p className="font-mono text-xs text-text-secondary">
@@ -146,7 +167,7 @@ function UploadPanel({ onUpload }) {
           </p>
         )}
       </div>
-    </div>
+    </Panel>
   )
 }
 

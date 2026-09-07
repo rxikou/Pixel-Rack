@@ -36,7 +36,9 @@ function LoginPage() {
         onSubmit={handleSubmit}
         className="flex w-full max-w-sm flex-col gap-3 border-2 border-bg-container bg-bg-container/40 p-6"
       >
-        <h1 className="font-pixel text-base text-accent-blue">Log In</h1>
+        <h1 className="font-pixel text-xl uppercase tracking-wide text-accent-blue">
+          Log In
+        </h1>
 
         {error && <p className="font-mono text-xs text-accent-pink">{error}</p>}
 

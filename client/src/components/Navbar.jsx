@@ -47,14 +47,27 @@ function Navbar() {
       </div>
 
       <div className="flex items-center gap-3 font-mono text-sm text-text-secondary">
-        <span className="border-2 border-bg-primary bg-bg-primary px-3 py-1.5">
-          {user ? user.email : 'Guest'}
+        <span className="max-w-[16rem] truncate border-2 border-accent-blue/40 bg-bg-primary px-3 py-1.5 uppercase tracking-wide">
+          <span className="text-text-secondary/70">Profile: </span>
+          <span className="text-text-primary">
+            {user ? (user.name ?? user.email) : 'Guest'}
+          </span>
         </span>
+
+        <span className="relative" title="Notifications">
+          <span aria-hidden="true" className="text-lg">
+            &#128276;
+          </span>
+          <span className="absolute -right-1.5 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-accent-pink text-[10px] text-bg-primary">
+            2
+          </span>
+        </span>
+
         {user && (
           <button
             type="button"
             onClick={handleSignOut}
-            className="cursor-pointer border-2 border-bg-primary bg-bg-primary px-3 py-1.5 hover:border-accent-pink hover:text-accent-pink"
+            className="cursor-pointer border-2 border-bg-primary bg-bg-primary px-3 py-1.5 uppercase tracking-wide hover:border-accent-pink hover:text-accent-pink"
           >
             Log Out
           </button>
