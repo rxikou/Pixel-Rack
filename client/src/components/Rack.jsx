@@ -53,7 +53,11 @@ function Rack({ cars, environmentId, onDelete }) {
 
   return (
     <div
-      className={`relative overflow-hidden border-4 border-black/60 shadow-[0_6px_16px_rgba(0,0,0,0.5)] ${styles.frame}`}
+      // The min height matters for environments with scene artwork: a short
+      // container makes object-cover crop the room down to a thin strip, so
+      // the floor and props disappear. Shelves sit at the top and the rest of
+      // the room stays visible beneath them.
+      className={`relative flex min-h-[26rem] flex-col overflow-hidden border-4 border-black/60 shadow-[0_6px_16px_rgba(0,0,0,0.5)] ${styles.frame}`}
     >
       <EnvironmentScene environmentId={environmentId} />
 
@@ -61,7 +65,9 @@ function Rack({ cars, environmentId, onDelete }) {
       <div className={`pointer-events-none absolute inset-y-0 left-0 w-3 ${styles.post}`} />
       <div className={`pointer-events-none absolute inset-y-0 right-0 w-3 ${styles.post}`} />
 
-      <div className="relative flex flex-col gap-1 px-3 py-3">
+      {/* mt-auto stands the shelves on the floor of the scene rather than
+          leaving them floating up among the ceiling beams */}
+      <div className="relative mt-auto flex flex-col gap-1 px-3 py-3">
         {cars.length === 0 && (
           <p className="py-12 text-center font-mono text-text-secondary">
             No cars yet. Upload your first Hot Wheels to fill the rack.

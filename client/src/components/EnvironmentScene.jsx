@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types'
+import garageBackground from '../assets/garage-background.webp'
 
 function RackScene() {
   return (
@@ -18,18 +19,15 @@ function RackScene() {
 
 function GarageScene() {
   return (
-    <div className="pointer-events-none absolute inset-0 overflow-hidden opacity-50">
-      <div className="absolute left-4 top-4 flex gap-2">
-        {[0, 1, 2].map((i) => (
-          <div
-            key={i}
-            className="h-6 w-6 rounded-full border-4 border-slate-950 bg-slate-600"
-          />
-        ))}
-      </div>
-      <div className="absolute right-6 top-3 h-10 w-1 bg-slate-500" />
-      <div className="absolute right-3 top-3 h-1 w-8 bg-slate-500" />
-      <div className="absolute bottom-0 left-0 h-3 w-full bg-slate-950" />
+    <div className="pointer-events-none absolute inset-0 overflow-hidden">
+      <img
+        src={garageBackground}
+        alt=""
+        className="h-full w-full object-cover"
+      />
+      {/* The artwork is busy; this scrim keeps the shelves and car sprites
+          readable on top of it without washing the scene out. */}
+      <div className="absolute inset-0 bg-bg-primary/35" />
     </div>
   )
 }
