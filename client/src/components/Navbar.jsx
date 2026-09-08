@@ -1,11 +1,21 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import logo from '../assets/pixelrack-logo.png'
+import houseIcon from '../assets/icons/house.png'
+import rackIcon from '../assets/icons/rack.png'
+import uploadIcon from '../assets/icons/upload.png'
 import { useAuth } from '../context/AuthContext'
 
 const NAV_LINKS = [
-  { to: '/', label: 'Home' },
-  { to: '/dashboard', label: 'My Rack' },
+  { to: '/', label: 'Home', icon: houseIcon },
+  { to: '/dashboard', label: 'My Rack', icon: rackIcon },
 ]
+
+const navItemClass = (active) =>
+  `flex flex-col items-center gap-1 border-b-2 pb-1 ${
+    active
+      ? 'border-accent-blue text-accent-blue'
+      : 'border-transparent text-text-secondary hover:text-accent-blue'
+  }`
 
 function Navbar() {
   const { pathname } = useLocation()
@@ -23,24 +33,19 @@ function Navbar() {
         <Link to="/">
           <img src={logo} alt="PixelRack" className="pixelated h-16" />
         </Link>
-        <nav className="flex gap-6 font-mono text-sm font-medium uppercase tracking-wide">
+        <nav className="flex gap-6 font-mono text-xs font-medium uppercase tracking-wide">
           {NAV_LINKS.map((link) => (
             <Link
               key={link.to}
               to={link.to}
-              className={
-                pathname === link.to
-                  ? 'border-b-2 border-accent-blue pb-1 text-accent-blue'
-                  : 'border-b-2 border-transparent pb-1 text-text-secondary hover:text-accent-blue'
-              }
+              className={navItemClass(pathname === link.to)}
             >
+              <img src={link.icon} alt="" className="pixelated h-8 w-8" />
               {link.label}
             </Link>
           ))}
-          <a
-            href="#upload-panel"
-            className="border-b-2 border-transparent pb-1 text-text-secondary hover:text-accent-blue"
-          >
+          <a href="#upload-panel" className={navItemClass(false)}>
+            <img src={uploadIcon} alt="" className="pixelated h-8 w-8" />
             Upload
           </a>
         </nav>
