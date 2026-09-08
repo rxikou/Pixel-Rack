@@ -37,7 +37,7 @@ Seeded by `server/prisma/seed.js` (`node prisma/seed.js`).
 1. Client POSTs image payload to `/api/cars/upload`.
 2. Express backend verifies the Neon Auth JWT (from the `Authorization` header) against Neon's JWKS endpoint.
 3. Express runs `@imgly/background-removal-node` in a child process to cut the car out of its photo background, leaving it on transparency.
-4. Express passes that cutout to `sharp`, which resizes to a fixed 64x48 canvas with nearest-neighbor and reduces to 16 colors so the sprite is pixel-perfect and grid-aligned.
+4. Express passes that cutout to `sharp`, which resizes to a fixed 96x72 canvas with nearest-neighbor and reduces to 16 colors so the sprite is pixel-perfect and grid-aligned.
 5. Backend writes the sprite next to the original and serves both from `/uploads` (cloud storage such as AWS S3 is still planned).
 6. Backend saves image URLs and metadata to PostgreSQL.
 7. Backend returns new Car object to React frontend.

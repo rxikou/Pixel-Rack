@@ -11,7 +11,7 @@
 * Web Framework: Express.js
 * Image Processing (two-stage pipeline, runs entirely locally - no API key, no per-image cost):
   * `@imgly/background-removal-node` runs an ONNX model on the server to cut the car out of its photo background. Chosen over the Gemini API because image generation has no free tier (~$0.04 per upload), and background removal is the part `sharp` genuinely cannot do.
-  * `sharp` then resizes to a fixed 64x48 sprite canvas with nearest-neighbor (no smoothing) and reduces to 16 colors, giving the flat 16-bit look while preserving each car's real body color. The client upscales with `image-rendering: pixelated`.
+  * `sharp` then resizes to a fixed 96x72 sprite canvas with nearest-neighbor (no smoothing) and reduces to 16 colors, giving the flat 16-bit look while preserving each car's real body color. The client upscales with `image-rendering: pixelated`.
   * Note: the removal library pins an older `sharp`, so it runs in a child process (`src/utils/removeBackgroundWorker.js`). Loading both sharp builds in one process crashes libvips.
   * Tradeoff vs the AI approach: this removes the background but does not re-angle or redraw the car, so a side-on photo yields a better sprite than a 3/4 view.
 * Authentication: Neon Auth (Managed Better Auth) - Neon's hosted auth service. The client SDK (`@neondatabase/neon-js`) handles sign-up/sign-in and issues a JWT; the Express backend verifies that JWT against Neon's JWKS endpoint (via `jose`) instead of hand-rolling password hashing or token issuance.

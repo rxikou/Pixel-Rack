@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import BracketButton from './BracketButton'
 import Panel from './Panel'
 import PixelCarIcon from './PixelCarIcon'
+import ImageCropper, { cropFileToPng, INITIAL_CROP } from './ImageCropper'
 import { uploadCar } from '../api/cars'
 import { spriteColorFor } from '../utils/spriteColor'
 
@@ -14,6 +15,7 @@ function UploadPanel({ onUpload }) {
   const [progress, setProgress] = useState(0)
   const [isProcessing, setIsProcessing] = useState(false)
   const [error, setError] = useState('')
+  const [crop, setCrop] = useState(INITIAL_CROP)
 
   useEffect(() => {
     return () => {
@@ -26,6 +28,7 @@ function UploadPanel({ onUpload }) {
     if (!selected) return
     setFile(selected)
     setPreviewUrl(URL.createObjectURL(selected))
+    setCrop(INITIAL_CROP)
   }
 
   async function handleSubmit(e) {
@@ -36,8 +39,12 @@ function UploadPanel({ onUpload }) {
     setProgress(0)
     setIsProcessing(true)
     try {
+      // Upload only the cropped region: background removal treats a packaged
+      // car as one object, so sending the whole photo yields a sprite of the
+      // packaging rather than the car.
+      const toUpload = crop ? await cropFileToPng(file, crop) : file
       const car = await uploadCar({
-        file,
+        file: toUpload,
         name,
         series,
         onProgress: setProgress,
@@ -51,6 +58,7 @@ function UploadPanel({ onUpload }) {
       setPreviewUrl('')
       setName('')
       setSeries('')
+      setCrop(INITIAL_CROP)
     } catch (err) {
       setError(err.message)
     } finally {
@@ -132,6 +140,11 @@ function UploadPanel({ onUpload }) {
                 className="hidden"
               />
             </label>
+
+            {previewUrl && (
+              <ImageCropper src={previewUrl} crop={crop} onChange={setCrop} />
+            )}
+
             <input
               type="text"
               placeholder="Car name"

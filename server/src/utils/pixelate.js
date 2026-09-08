@@ -14,8 +14,8 @@ const WORKER = path.join(here, 'removeBackgroundWorker.js')
 // Target sprite resolution. Kept small on purpose: the client renders it with
 // `image-rendering: pixelated`, so the browser does the crisp upscaling and we
 // store a genuinely low-resolution sprite rather than a blurry large one.
-export const SPRITE_WIDTH = 64
-export const SPRITE_HEIGHT = 48
+export const SPRITE_WIDTH = 96
+export const SPRITE_HEIGHT = 72
 
 // Colour cap for the sprite. Measured, not guessed: sharp only actually
 // quantizes at low values here. At `colours: 32` a test sprite still came out
