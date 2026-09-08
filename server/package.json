@@ -16,6 +16,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@google/genai": "^2.21.0",
     "@imgly/background-removal-node": "^1.4.5",
     "@prisma/adapter-neon": "^7.10.0",
     "@prisma/client": "^7.10.0",

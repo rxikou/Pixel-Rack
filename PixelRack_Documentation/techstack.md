@@ -9,11 +9,12 @@
 ## 2. Backend
 * Runtime Environment: Node.js
 * Web Framework: Express.js
-* Image Processing (two-stage pipeline, runs entirely locally - no API key, no per-image cost):
-  * `@imgly/background-removal-node` runs an ONNX model on the server to cut the car out of its photo background. Chosen over the Gemini API because image generation has no free tier (~$0.04 per upload), and background removal is the part `sharp` genuinely cannot do.
-  * `sharp` then resizes to a fixed 96x72 sprite canvas with nearest-neighbor (no smoothing) and reduces to 16 colors, giving the flat 16-bit look while preserving each car's real body color. The client upscales with `image-rendering: pixelated`.
+* Image Processing (two-stage pipeline with a paid primary and a free fallback):
+  * Stage 1 preferred: `@google/genai` (Gemini image model) **redraws** the photo as hand-drawn pixel art via a fixed prompt. This is the only step that achieves drawn-sprite style: resizing and color reduction can only ever produce a pixelated photograph, never flat drawn artwork. Image generation has **no free tier**, so it is billed per upload (~$0.04) and needs billing enabled on the Google Cloud project. A consumer Gemini Pro subscription does not grant API quota.
+  * Stage 1 fallback: if no key is configured or the call fails, `@imgly/background-removal-node` cuts the car out locally (free, offline). It only removes the background, it does not redraw, so quality is visibly lower. The API reports this back as `pixelationError` so the UI can say the degraded route was used.
+  * Stage 2: `sharp` trims the transparent margin, fits to a fixed 96x72 sprite canvas and caps the palette at 16 colors. The client upscales with `image-rendering: pixelated`.
+  * The resize kernel differs by route on purpose: Gemini output is already flat art, so `nearest` preserves its hard edges; a photograph needs an averaging kernel, since `nearest` samples single pixels and keeps camera noise.
   * Note: the removal library pins an older `sharp`, so it runs in a child process (`src/utils/removeBackgroundWorker.js`). Loading both sharp builds in one process crashes libvips.
-  * Tradeoff vs the AI approach: this removes the background but does not re-angle or redraw the car, so a side-on photo yields a better sprite than a 3/4 view.
 * Authentication: Neon Auth (Managed Better Auth) - Neon's hosted auth service. The client SDK (`@neondatabase/neon-js`) handles sign-up/sign-in and issues a JWT; the Express backend verifies that JWT against Neon's JWKS endpoint (via `jose`) instead of hand-rolling password hashing or token issuance.
 
 ## 3. Database

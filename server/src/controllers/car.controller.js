@@ -31,10 +31,19 @@ export async function uploadCar(req, res) {
 
   try {
     const original = await fs.readFile(req.file.path)
-    const sprite = await pixelateImage(original)
+    const { sprite, source, degradedReason } = await pixelateImage(
+      original,
+      req.file.mimetype,
+    )
     const spriteName = `${req.file.filename}-sprite.png`
     await fs.writeFile(path.join(path.dirname(req.file.path), spriteName), sprite)
     pixelImageUrl = `/uploads/${spriteName}`
+
+    // Gemini redraws the car; the local fallback only cuts the background out,
+    // so say when the lower-quality route was used instead of failing silently.
+    if (source === 'local') {
+      pixelationError = `Used the free local fallback (lower quality): ${degradedReason}`
+    }
   } catch (err) {
     // Deliberately non-fatal: losing the user's upload because the AI step
     // failed would be worse than saving the car with a placeholder sprite,
