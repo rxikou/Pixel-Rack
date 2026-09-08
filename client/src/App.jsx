@@ -3,6 +3,8 @@ import LandingPage from './pages/LandingPage'
 import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
 import DashboardPage from './pages/DashboardPage'
+import GaragePage from './pages/GaragePage'
+import KonbiniPage from './pages/KonbiniPage'
 import BackgroundFX from './components/BackgroundFX'
 import PageFrame from './components/PageFrame'
 import ProtectedRoute from './components/ProtectedRoute'
@@ -23,6 +25,22 @@ function App() {
             element={
               <ProtectedRoute>
                 <DashboardPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/garage"
+            element={
+              <ProtectedRoute>
+                <GaragePage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/konbini"
+            element={
+              <ProtectedRoute>
+                <KonbiniPage />
               </ProtectedRoute>
             }
           />

@@ -1,35 +1,26 @@
 import PropTypes from 'prop-types'
+import { Link } from 'react-router-dom'
 import Panel from './Panel'
 import EnvironmentThumb from './EnvironmentThumb'
 
-function EnvironmentGallery({ environments, activeId, onSelect }) {
+// Each environment is now its own page rather than a backdrop for the rack,
+// so these cards navigate instead of reskinning the shelf in place.
+const ROUTES = {
+  rack: '/dashboard',
+  garage: '/garage',
+  konbini: '/konbini',
+}
+
+function EnvironmentGallery({ environments }) {
   return (
     <Panel title="Virtual Settings & Unlockables">
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {environments.map((env) => {
-          const isActive = env.id === activeId
-          const locked = Boolean(env.isPremium)
+          const to = ROUTES[env.id]
+          const locked = Boolean(env.isPremium) || !to
 
-          return (
-            <button
-              key={env.id}
-              type="button"
-              disabled={locked}
-              aria-pressed={isActive}
-              onClick={() => onSelect(env.id)}
-              title={
-                locked ? 'Premium environments are not available yet' : undefined
-              }
-              className={`pixel-panel flex flex-col overflow-hidden text-left transition-colors ${
-                locked
-                  ? 'cursor-not-allowed opacity-60'
-                  : 'cursor-pointer'
-              } ${
-                isActive
-                  ? 'ring-4 ring-amber-400'
-                  : !locked && 'hover:brightness-110'
-              }`}
-            >
+          const card = (
+            <>
               <EnvironmentThumb environmentId={env.id} />
               <div className="flex w-full items-center justify-between gap-2 bg-slate-800 px-3 py-2">
                 <span className="pixel-text truncate font-pixel text-base uppercase tracking-wide text-white">
@@ -37,17 +28,35 @@ function EnvironmentGallery({ environments, activeId, onSelect }) {
                 </span>
                 <span
                   className={`shrink-0 font-mono text-[10px] uppercase tracking-wide ${
-                    locked
-                      ? 'text-text-secondary/60'
-                      : isActive
-                        ? 'text-accent-blue'
-                        : 'text-text-secondary'
+                    locked ? 'text-text-secondary/60' : 'text-accent-blue'
                   }`}
                 >
-                  {locked ? 'Unlock' : isActive ? 'Selected' : 'Select'}
+                  {locked ? 'Locked' : env.slots > 0 ? `${env.slots} slots` : 'Visit'}
                 </span>
               </div>
-            </button>
+            </>
+          )
+
+          if (locked) {
+            return (
+              <div
+                key={env.id}
+                title="Not available yet"
+                className="pixel-panel flex cursor-not-allowed flex-col overflow-hidden opacity-60"
+              >
+                {card}
+              </div>
+            )
+          }
+
+          return (
+            <Link
+              key={env.id}
+              to={to}
+              className="pixel-panel flex flex-col overflow-hidden hover:brightness-110"
+            >
+              {card}
+            </Link>
           )
         })}
       </div>
@@ -61,10 +70,9 @@ EnvironmentGallery.propTypes = {
       id: PropTypes.string.isRequired,
       name: PropTypes.string.isRequired,
       isPremium: PropTypes.bool,
+      slots: PropTypes.number,
     }),
   ).isRequired,
-  activeId: PropTypes.string.isRequired,
-  onSelect: PropTypes.func.isRequired,
 }
 
 export default EnvironmentGallery

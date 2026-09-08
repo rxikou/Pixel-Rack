@@ -74,3 +74,22 @@ export function deleteCar(id) {
 export function fetchEnvironments() {
   return apiFetch('/api/environments')
 }
+
+export async function fetchPlacements(environmentId) {
+  const data = await apiFetch(`/api/environments/${environmentId}/placements`)
+  return {
+    ...data,
+    placements: data.placements.map((p) => ({
+      ...p,
+      car: resolveImageUrls(p.car),
+    })),
+  }
+}
+
+/** Pass carId null to clear the slot. */
+export function setPlacement(environmentId, slotIndex, carId) {
+  return apiFetch(
+    `/api/environments/${environmentId}/placements/${slotIndex}`,
+    { method: 'PUT', body: JSON.stringify({ carId }) },
+  )
+}

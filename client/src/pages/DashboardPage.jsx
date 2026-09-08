@@ -14,7 +14,6 @@ import {
 function DashboardPage() {
   const [cars, setCars] = useState([])
   const [environments, setEnvironments] = useState([])
-  const [environmentId, setEnvironmentId] = useState(null)
   const [sort, setSort] = useState('shelf')
   const [seriesFilter, setSeriesFilter] = useState('all')
   const [isLoading, setIsLoading] = useState(true)
@@ -32,7 +31,6 @@ function DashboardPage() {
         if (cancelled) return
         setCars(carList)
         setEnvironments(envList)
-        setEnvironmentId((current) => current ?? envList[0]?.id ?? null)
       } catch (err) {
         if (!cancelled) setError(err.message)
       } finally {
@@ -84,8 +82,6 @@ function DashboardPage() {
     setCars((prev) => [...prev, newCar])
   }
 
-  const activeEnvironment = environments.find((env) => env.id === environmentId)
-
   return (
     <div className="flex min-h-screen flex-col">
       <Navbar />
@@ -104,7 +100,7 @@ function DashboardPage() {
 
           <div className="border-2 border-accent-blue/25 bg-bg-container/40 p-4">
             <RackHeader
-              rackName={activeEnvironment?.name ?? ''}
+              rackName="The Wooden Shelf"
               carCount={visibleCars.length}
               shelfCount={shelfCount}
               sort={sort}
@@ -120,23 +116,17 @@ function DashboardPage() {
                   Loading your rack...
                 </p>
               ) : (
-                environmentId && (
-                  <Rack
-                    cars={visibleCars}
-                    environmentId={environmentId}
-                    onDelete={handleDelete}
-                  />
-                )
+                <Rack
+                  cars={visibleCars}
+                  environmentId="rack"
+                  onDelete={handleDelete}
+                />
               )}
             </div>
           </div>
 
-          {environments.length > 0 && environmentId && (
-            <EnvironmentGallery
-              environments={environments}
-              activeId={environmentId}
-              onSelect={setEnvironmentId}
-            />
+          {environments.length > 0 && (
+            <EnvironmentGallery environments={environments} />
           )}
         </section>
       </main>

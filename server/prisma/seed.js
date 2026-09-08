@@ -2,17 +2,24 @@ import '../src/lib/loadEnv.js'
 import { prisma } from '../src/lib/prisma.js'
 
 // Ids are stable strings, not UUIDs: the client maps them to a scene renderer.
+// slots = how many cars the scene displays. 0 means "show everything", which
+// is what the default rack does.
 const environments = [
-  { id: 'rack', name: 'Wooden Rack', isPremium: false, sortOrder: 1 },
-  { id: 'garage', name: 'Virtual Garage', isPremium: false, sortOrder: 2 },
-  { id: 'konbini', name: '7-11 Japan', isPremium: true, sortOrder: 3 },
+  { id: 'rack', name: 'Wooden Rack', isPremium: false, sortOrder: 1, slots: 0 },
+  { id: 'garage', name: 'Virtual Garage', isPremium: false, sortOrder: 2, slots: 2 },
+  { id: 'konbini', name: '7-11 Japan', isPremium: false, sortOrder: 3, slots: 3 },
 ]
 
 async function main() {
   for (const env of environments) {
     await prisma.environment.upsert({
       where: { id: env.id },
-      update: { name: env.name, isPremium: env.isPremium, sortOrder: env.sortOrder },
+      update: {
+        name: env.name,
+        isPremium: env.isPremium,
+        sortOrder: env.sortOrder,
+        slots: env.slots,
+      },
       create: env,
     })
   }

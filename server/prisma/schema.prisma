@@ -14,7 +14,8 @@ model User {
   email     String   @unique
   createdAt DateTime @default(now()) @map("created_at")
 
-  cars Car[]
+  cars       Car[]
+  placements Placement[]
 
   @@map("users")
 }
@@ -29,7 +30,8 @@ model Car {
   series           String?
   createdAt        DateTime @default(now()) @map("created_at")
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  placements Placement[]
 
   @@map("cars")
 }
@@ -43,6 +45,31 @@ model Environment {
   backgroundUrl String? @map("background_url")
   isPremium     Boolean @default(false) @map("is_premium")
   sortOrder     Int     @default(0) @map("sort_order")
+  // How many cars this scene can display. 0 means it shows the whole
+  // collection instead of a fixed number of slots (the default rack).
+  slots Int @default(0)
+
+  placements Placement[]
 
   @@map("environments")
+}
+
+// Which car a user has put in which slot of a scene. One row per filled slot;
+// an empty slot simply has no row.
+model Placement {
+  id            String   @id @default(uuid())
+  userId        String   @map("user_id")
+  environmentId String   @map("environment_id")
+  slotIndex     Int      @map("slot_index")
+  carId         String   @map("car_id")
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  environment Environment @relation(fields: [environmentId], references: [id], onDelete: Cascade)
+  car         Car         @relation(fields: [carId], references: [id], onDelete: Cascade)
+
+  // A slot holds at most one car, and a car appears at most once per scene.
+  @@unique([userId, environmentId, slotIndex])
+  @@unique([userId, environmentId, carId])
+  @@map("placements")
 }

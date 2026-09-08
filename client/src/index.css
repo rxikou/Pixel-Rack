@@ -137,8 +137,64 @@ body {
   animation: scan-sweep 9s linear infinite;
 }
 
+/* Scene interactions: a wash (soap bubbles rising plus a shine sweep across
+   the car) and a sparkle, both built from CSS rather than sprite frames. */
+@keyframes bubble-rise {
+  0% {
+    transform: translateY(0) scale(0.6);
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.9;
+  }
+  100% {
+    transform: translateY(-64px) scale(1.1);
+    opacity: 0;
+  }
+}
+
+@keyframes shine-across {
+  from {
+    transform: translateX(-120%) skewX(-20deg);
+  }
+  to {
+    transform: translateX(320%) skewX(-20deg);
+  }
+}
+
+@keyframes sparkle-pop {
+  0% {
+    transform: scale(0) rotate(0deg);
+    opacity: 0;
+  }
+  40% {
+    transform: scale(1.2) rotate(20deg);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0.4) rotate(45deg);
+    opacity: 0;
+  }
+}
+
+.animate-bubble-rise {
+  animation: bubble-rise 1.4s ease-out forwards;
+}
+.animate-shine-across {
+  animation: shine-across 1s ease-in-out forwards;
+}
+.animate-sparkle-pop {
+  animation: sparkle-pop 1s ease-out forwards;
+}
+
 /* Motion can be uncomfortable for some viewers; hold everything still. */
 @media (prefers-reduced-motion: reduce) {
+  .animate-bubble-rise,
+  .animate-shine-across,
+  .animate-sparkle-pop {
+    animation: none;
+    opacity: 0;
+  }
   .animate-grid-drift,
   .animate-glow-drift,
   .animate-float-up,
