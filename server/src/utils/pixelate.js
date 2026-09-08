@@ -129,10 +129,11 @@ export async function quantizeToSprite(imageBuffer, { kernel = 'nearest' } = {})
  * at lower visual quality. Returns the sprite plus which route produced it.
  */
 export async function pixelateImage(imageBuffer, mimeType = 'image/png') {
-  // Provider order is cheapest-capable-first. Cloudflare's img2img is free,
-  // Gemini is billed per image, and local removal is the last resort because
-  // it cannot redraw at all.
-  const provider = (process.env.PIXELATION_PROVIDER || 'cloudflare').toLowerCase()
+  // Defaults to Gemini for output quality; it is billed per image and needs
+  // active credits. `cloudflare` swaps in free SD img2img, `local` forces the
+  // no-redraw fallback. Any failure falls through to local so an upload is
+  // never lost.
+  const provider = (process.env.PIXELATION_PROVIDER || 'gemini').toLowerCase()
 
   try {
     if (provider === 'cloudflare') {
