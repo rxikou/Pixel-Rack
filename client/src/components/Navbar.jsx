@@ -61,15 +61,6 @@ function Navbar() {
           </span>
         </span>
 
-        <span className="relative" title="Notifications">
-          <span aria-hidden="true" className="text-lg">
-            &#128276;
-          </span>
-          <span className="absolute -right-1.5 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-accent-pink text-[10px] text-bg-primary">
-            2
-          </span>
-        </span>
-
         {user && (
           <button
             type="button"
