@@ -1,35 +1,24 @@
 import PropTypes from 'prop-types'
 
+// Saturated fills rather than one accent colour: the reference UI colour-codes
+// its actions (orange, red, magenta, blue, green) instead of tinting
+// everything the same hue.
 const VARIANTS = {
-  primary: {
-    base: 'bg-accent-blue text-bg-primary border-sky-700',
-    hover: 'hover:brightness-110 hover:shadow-[0_0_14px_rgba(56,189,248,0.55)]',
-  },
-  secondary: {
-    base: 'bg-bg-container text-text-primary border-slate-950',
-    hover: 'hover:border-accent-blue hover:brightness-125',
-  },
-  accent: {
-    base: 'bg-accent-pink text-bg-primary border-pink-700',
-    hover: 'hover:brightness-110 hover:shadow-[0_0_14px_rgba(244,114,182,0.55)]',
-  },
-  danger: {
-    base: 'bg-red-500 text-bg-primary border-red-800',
-    hover: 'hover:brightness-110 hover:shadow-[0_0_14px_rgba(239,68,68,0.55)]',
-  },
+  primary: 'bg-sky-500 text-white',
+  secondary: 'bg-slate-600 text-white',
+  accent: 'bg-fuchsia-500 text-white',
+  success: 'bg-green-500 text-white',
+  warning: 'bg-orange-500 text-white',
+  danger: 'bg-red-500 text-white',
 }
 
 function Button({ variant = 'secondary', className, children, disabled, ...props }) {
-  const { base, hover } = VARIANTS[variant]
-
   return (
     <button
       disabled={disabled}
-      className={`rounded-none border-2 border-b-4 px-4 py-2 font-mono text-sm font-medium shadow-[inset_0_1px_0_rgba(255,255,255,0.25)] transition-all duration-100 ${
-        disabled
-          ? 'cursor-not-allowed opacity-50 shadow-none'
-          : `cursor-pointer active:translate-y-0.5 active:border-b-2 active:shadow-none ${hover}`
-      } ${base} ${className ?? ''}`}
+      className={`pixel-btn pixel-text cursor-pointer rounded-none px-4 py-2 font-pixel text-lg uppercase leading-none tracking-wide ${
+        disabled ? 'cursor-not-allowed opacity-50' : 'hover:brightness-110'
+      } ${VARIANTS[variant]} ${className ?? ''}`}
       {...props}
     >
       {children}

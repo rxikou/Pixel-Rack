@@ -30,6 +30,52 @@ body {
   image-rendering: pixelated;
 }
 
+/* Tuber-Simulator-style chunky UI. The defining traits of that look are a
+   hard black outline on every element, a bevel (light top edge, dark bottom)
+   so panels read as raised, and text outlined in black rather than shadowed. */
+.pixel-panel {
+  border: 3px solid #05070d;
+  box-shadow:
+    inset 0 3px 0 rgba(255, 255, 255, 0.18),
+    inset 0 -3px 0 rgba(0, 0, 0, 0.45),
+    0 3px 0 #05070d;
+}
+
+/* Same treatment, but pressed in rather than raised. */
+.pixel-inset {
+  border: 3px solid #05070d;
+  box-shadow:
+    inset 0 3px 0 rgba(0, 0, 0, 0.55),
+    inset 0 -2px 0 rgba(255, 255, 255, 0.08);
+}
+
+.pixel-text {
+  text-shadow:
+    2px 2px 0 #05070d,
+    -1px 1px 0 #05070d,
+    1px -1px 0 #05070d,
+    -1px -1px 0 #05070d;
+}
+
+/* Chunky button: raised, and physically depresses on click. */
+.pixel-btn {
+  border: 3px solid #05070d;
+  box-shadow:
+    inset 0 3px 0 rgba(255, 255, 255, 0.28),
+    inset 0 -4px 0 rgba(0, 0, 0, 0.4),
+    0 4px 0 #05070d;
+  transition:
+    transform 60ms,
+    box-shadow 60ms;
+}
+.pixel-btn:active:not(:disabled) {
+  transform: translateY(3px);
+  box-shadow:
+    inset 0 3px 0 rgba(255, 255, 255, 0.2),
+    inset 0 -2px 0 rgba(0, 0, 0, 0.4),
+    0 1px 0 #05070d;
+}
+
 /* Animated background: the grid tile is 28px, so translating exactly one
    tile loops seamlessly. Transform (not background-position) keeps it on
    the compositor instead of repainting every frame. */

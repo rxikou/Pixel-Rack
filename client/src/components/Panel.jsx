@@ -4,10 +4,10 @@ function Panel({ id, title, action, children, bodyClassName, className }) {
   return (
     <section
       id={id}
-      className={`border-2 border-accent-blue/25 bg-bg-container/40 ${className ?? ''}`}
+      className={`pixel-panel bg-bg-container/70 ${className ?? ''}`}
     >
-      <header className="flex flex-wrap items-center justify-between gap-2 border-b-2 border-accent-blue/25 bg-bg-container/80 px-4 py-3">
-        <h2 className="font-pixel text-lg uppercase leading-none tracking-wide text-text-primary sm:text-xl">
+      <header className="flex flex-wrap items-center justify-between gap-2 border-b-[3px] border-[#05070d] bg-sky-700 px-4 py-2">
+        <h2 className="pixel-text font-pixel text-lg uppercase leading-none tracking-wide text-white sm:text-xl">
           {title}
         </h2>
         {action}

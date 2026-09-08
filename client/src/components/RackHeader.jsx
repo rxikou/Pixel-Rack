@@ -1,4 +1,6 @@
 import PropTypes from 'prop-types'
+import PixelCarIcon from './PixelCarIcon'
+import rackIcon from '../assets/icons/rack.png'
 
 const SORTS = [
   { id: 'shelf', label: 'Shelf' },
@@ -19,16 +21,29 @@ function RackHeader({
   onFilterChange,
 }) {
   return (
-    <div className="flex flex-wrap items-end justify-between gap-3 border-b-2 border-accent-blue/25 pb-3">
-      <div>
-        <h2 className="font-pixel text-lg uppercase leading-none tracking-wide text-text-primary sm:text-xl">
+    <div className="flex flex-wrap items-end justify-between gap-3 pb-3">
+      <div className="flex flex-col gap-2">
+        <h2 className="pixel-text font-pixel text-lg uppercase leading-none tracking-wide text-white sm:text-xl">
           Primary Visual Rack: "{rackName}"
         </h2>
-        <p className="mt-1 font-mono text-xs uppercase tracking-wide text-text-secondary">
-          {carCount} {carCount === 1 ? 'car' : 'cars'} displayed
-          <span className="mx-2 text-accent-blue/40">|</span>
-          {shelfCount} {shelfCount === 1 ? 'shelf' : 'shelves'}
-        </p>
+
+        {/* Stat readout styled like the reference's HUD counters: icon in a
+            coloured chip, value beside it, all inside one inset panel. */}
+        <div className="pixel-inset flex w-fit items-center gap-3 bg-slate-900/80 px-3 py-1.5">
+          <span className="flex items-center gap-1.5">
+            <PixelCarIcon color="#38bdf8" className="h-4 w-7" />
+            <span className="pixel-text font-pixel text-lg leading-none text-white">
+              {carCount}
+            </span>
+          </span>
+          <span className="h-4 w-[2px] bg-black/60" />
+          <span className="flex items-center gap-1.5">
+            <img src={rackIcon} alt="" className="pixelated h-5 w-5" />
+            <span className="pixel-text font-pixel text-lg leading-none text-white">
+              {shelfCount}
+            </span>
+          </span>
+        </div>
       </div>
 
       <div className="flex flex-wrap items-center gap-2 font-mono text-xs uppercase tracking-wide text-text-secondary">

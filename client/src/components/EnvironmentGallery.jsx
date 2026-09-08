@@ -20,19 +20,19 @@ function EnvironmentGallery({ environments, activeId, onSelect }) {
               title={
                 locked ? 'Premium environments are not available yet' : undefined
               }
-              className={`flex flex-col overflow-hidden border-2 text-left transition-colors ${
+              className={`pixel-panel flex flex-col overflow-hidden text-left transition-colors ${
                 locked
-                  ? 'cursor-not-allowed border-bg-container opacity-60'
+                  ? 'cursor-not-allowed opacity-60'
                   : 'cursor-pointer'
               } ${
                 isActive
-                  ? 'border-accent-blue shadow-[0_0_12px_rgba(56,189,248,0.35)]'
-                  : !locked && 'border-bg-container hover:border-accent-blue/60'
+                  ? 'ring-4 ring-amber-400'
+                  : !locked && 'hover:brightness-110'
               }`}
             >
               <EnvironmentThumb environmentId={env.id} />
-              <div className="flex w-full items-center justify-between gap-2 bg-bg-container/80 px-3 py-2">
-                <span className="truncate font-mono text-xs uppercase tracking-wide text-text-primary">
+              <div className="flex w-full items-center justify-between gap-2 bg-slate-800 px-3 py-2">
+                <span className="pixel-text truncate font-pixel text-base uppercase tracking-wide text-white">
                   {env.name}
                 </span>
                 <span

@@ -11,10 +11,12 @@ const NAV_LINKS = [
 ]
 
 const navItemClass = (active) =>
-  `flex flex-col items-center gap-1 border-b-2 pb-1 ${
+  // Against the solid blue bar, grey-on-blue reads poorly; white with an
+  // amber active state gives the high-contrast pop the reference UI uses.
+  `pixel-text flex flex-col items-center gap-1 border-b-[3px] pb-1 ${
     active
-      ? 'border-accent-blue text-accent-blue'
-      : 'border-transparent text-text-secondary hover:text-accent-blue'
+      ? 'border-amber-400 text-amber-300'
+      : 'border-transparent text-white/85 hover:text-amber-200'
   }`
 
 function Navbar() {
@@ -28,7 +30,7 @@ function Navbar() {
   }
 
   return (
-    <header className="sticky top-0 z-40 flex flex-wrap items-center justify-between gap-4 border-b-2 border-accent-blue/50 bg-bg-container/90 px-6 py-3 shadow-[0_2px_20px_rgba(56,189,248,0.15)] backdrop-blur">
+    <header className="sticky top-0 z-40 flex flex-wrap items-center justify-between gap-4 border-b-[3px] border-[#05070d] bg-sky-800 px-6 py-2 shadow-[0_4px_0_#05070d]">
       <div className="flex items-center gap-6">
         <Link to="/">
           <img src={logo} alt="PixelRack" className="pixelated h-16" />
@@ -52,7 +54,7 @@ function Navbar() {
       </div>
 
       <div className="flex items-center gap-3 font-mono text-sm text-text-secondary">
-        <span className="max-w-[16rem] truncate border-2 border-accent-blue/40 bg-bg-primary px-3 py-1.5 uppercase tracking-wide">
+        <span className="pixel-inset max-w-[16rem] truncate bg-slate-900/80 px-3 py-1.5 uppercase tracking-wide">
           <span className="text-text-secondary/70">Profile: </span>
           <span className="text-text-primary">
             {user ? (user.name ?? user.email) : 'Guest'}
@@ -72,7 +74,7 @@ function Navbar() {
           <button
             type="button"
             onClick={handleSignOut}
-            className="cursor-pointer border-2 border-bg-primary bg-bg-primary px-3 py-1.5 uppercase tracking-wide hover:border-accent-pink hover:text-accent-pink"
+            className="pixel-btn pixel-text cursor-pointer bg-red-500 px-3 py-1.5 font-pixel text-base uppercase leading-none tracking-wide text-white hover:brightness-110"
           >
             Log Out
           </button>

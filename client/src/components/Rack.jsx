@@ -12,6 +12,7 @@ const ENVIRONMENT_STYLES = {
     plankLip: 'bg-amber-500/80',
     plankFace: 'bg-gradient-to-b from-amber-700 to-amber-900',
     post: 'bg-gradient-to-r from-amber-950 via-amber-700 to-amber-950',
+    roomy: false,
   },
   garage: {
     frame: 'bg-gradient-to-b from-slate-600 to-slate-800',
@@ -19,6 +20,7 @@ const ENVIRONMENT_STYLES = {
     plankLip: 'bg-slate-200/80',
     plankFace: 'bg-gradient-to-b from-slate-400 to-slate-600',
     post: 'bg-gradient-to-r from-slate-900 via-slate-500 to-slate-900',
+    roomy: true,
   },
   konbini: {
     frame: 'bg-gradient-to-b from-emerald-800 to-sky-950',
@@ -26,6 +28,7 @@ const ENVIRONMENT_STYLES = {
     plankLip: 'bg-white/80',
     plankFace: 'bg-gradient-to-b from-zinc-200 to-zinc-400',
     post: 'bg-gradient-to-r from-red-900 via-red-600 to-red-900',
+    roomy: false,
   },
 }
 
@@ -53,11 +56,12 @@ function Rack({ cars, environmentId, onDelete }) {
 
   return (
     <div
-      // The min height matters for environments with scene artwork: a short
-      // container makes object-cover crop the room down to a thin strip, so
-      // the floor and props disappear. Shelves sit at the top and the rest of
-      // the room stays visible beneath them.
-      className={`relative flex min-h-[26rem] flex-col overflow-hidden border-4 border-black/60 shadow-[0_6px_16px_rgba(0,0,0,0.5)] ${styles.frame}`}
+      // Only environments with scene artwork need the tall canvas: without it
+      // object-cover crops the room to a thin strip. Applying it everywhere
+      // left the plain wooden rack as a large empty wall.
+      className={`relative flex flex-col overflow-hidden border-4 border-black/60 shadow-[0_6px_16px_rgba(0,0,0,0.5)] ${
+        styles.roomy ? 'min-h-[26rem]' : ''
+      } ${styles.frame}`}
     >
       <EnvironmentScene environmentId={environmentId} />
 
