@@ -132,11 +132,21 @@ export async function pixelateImage(imageBuffer, mimeType = 'image/png') {
     const drawn = await generatePixelArt(imageBuffer, mimeType)
     return { sprite: await quantizeToSprite(drawn, { kernel: 'nearest' }), source: 'gemini' }
   } catch (err) {
+    // The SDK retries some failures (e.g. 429) and the retry can fail with an
+    // opaque "TypeError: unusable" once the request body has been consumed,
+    // masking the real cause. Log the full error and give the user a message
+    // that points at the usual culprits rather than that noise.
+    console.error('Gemini pixelation failed, using local fallback:', err)
+    const opaque = /unusable|fetch failed/i.test(err.message ?? '')
+    const reason = opaque
+      ? 'Gemini call failed (check the API key and that billing/credits are active)'
+      : err.message
+
     const cutout = await removeCarBackground(imageBuffer)
     return {
       sprite: await quantizeToSprite(cutout, { kernel: 'lanczos3' }),
       source: 'local',
-      degradedReason: err.message,
+      degradedReason: reason,
     }
   }
 }
