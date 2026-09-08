@@ -1,8 +1,22 @@
 import { apiFetch } from './apiClient'
 import { authClient } from './authClient'
 
-export function fetchCars() {
-  return apiFetch('/api/cars')
+const API_URL = import.meta.env.VITE_API_URL
+
+// The API returns server-relative /uploads paths; the client runs on a
+// different origin in dev, so resolve them here rather than in components.
+function resolveImageUrls(car) {
+  const absolute = (url) => (url && url.startsWith('/') ? `${API_URL}${url}` : url)
+  return {
+    ...car,
+    originalImageUrl: absolute(car.originalImageUrl),
+    pixelImageUrl: absolute(car.pixelImageUrl),
+  }
+}
+
+export async function fetchCars() {
+  const cars = await apiFetch('/api/cars')
+  return cars.map(resolveImageUrls)
 }
 
 // XHR rather than fetch: it exposes real upload progress for the panel's bar.
@@ -35,7 +49,7 @@ export async function uploadCar({ file, name, series, onProgress }) {
       }
       if (xhr.status >= 200 && xhr.status < 300) {
         onProgress?.(100)
-        resolve(body.data)
+        resolve(resolveImageUrls(body.data))
       } else {
         reject(new Error(body.error || 'Upload failed'))
       }

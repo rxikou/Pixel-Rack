@@ -1,4 +1,7 @@
+import fs from 'node:fs/promises'
+import path from 'node:path'
 import { prisma } from '../lib/prisma.js'
+import { pixelateImage } from '../utils/pixelate.js'
 
 export async function listCars(req, res) {
   const cars = await prisma.car.findMany({
@@ -22,19 +25,35 @@ export async function uploadCar(req, res) {
   }
 
   // The original is kept on local disk for now; cloud storage (S3/Cloudinary)
-  // is still pending. pixelImageUrl stays null until the Gemini + sharp
-  // pipeline runs, and the client shows a placeholder sprite meanwhile.
+  // is still pending.
+  let pixelImageUrl = null
+  let pixelationError = null
+
+  try {
+    const original = await fs.readFile(req.file.path)
+    const sprite = await pixelateImage(original, req.file.mimetype)
+    const spriteName = `${req.file.filename}-sprite.png`
+    await fs.writeFile(path.join(path.dirname(req.file.path), spriteName), sprite)
+    pixelImageUrl = `/uploads/${spriteName}`
+  } catch (err) {
+    // Deliberately non-fatal: losing the user's upload because the AI step
+    // failed would be worse than saving the car with a placeholder sprite,
+    // which the client already renders. Surfaced so the client can say so.
+    pixelationError = err.message
+    console.error('Pixelation failed:', err.message)
+  }
+
   const car = await prisma.car.create({
     data: {
       userId: req.user.id,
       name,
       series: series || null,
       originalImageUrl: `/uploads/${req.file.filename}`,
-      pixelImageUrl: null,
+      pixelImageUrl,
     },
   })
 
-  res.status(201).json({ success: true, data: car })
+  res.status(201).json({ success: true, data: { ...car, pixelationError } })
 }
 
 export async function updateCar(req, res) {

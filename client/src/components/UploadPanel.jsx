@@ -43,6 +43,10 @@ function UploadPanel({ onUpload }) {
         onProgress: setProgress,
       })
       onUpload(car)
+      // The car still saved; say so rather than silently showing a placeholder.
+      if (car.pixelationError) {
+        setError(`Saved, but pixelation failed: ${car.pixelationError}`)
+      }
       setFile(null)
       setPreviewUrl('')
       setName('')
