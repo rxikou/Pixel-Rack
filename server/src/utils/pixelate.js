@@ -7,6 +7,7 @@ import { fileURLToPath } from 'node:url'
 import { promisify } from 'node:util'
 import { GoogleGenAI } from '@google/genai'
 import sharp from 'sharp'
+import { generateWithCloudflare } from './providers/cloudflare.js'
 
 const execFileAsync = promisify(execFile)
 const here = path.dirname(fileURLToPath(import.meta.url))
@@ -128,7 +129,22 @@ export async function quantizeToSprite(imageBuffer, { kernel = 'nearest' } = {})
  * at lower visual quality. Returns the sprite plus which route produced it.
  */
 export async function pixelateImage(imageBuffer, mimeType = 'image/png') {
+  // Provider order is cheapest-capable-first. Cloudflare's img2img is free,
+  // Gemini is billed per image, and local removal is the last resort because
+  // it cannot redraw at all.
+  const provider = (process.env.PIXELATION_PROVIDER || 'cloudflare').toLowerCase()
+
   try {
+    if (provider === 'cloudflare') {
+      const drawn = await generateWithCloudflare(imageBuffer)
+      return {
+        sprite: await quantizeToSprite(drawn, { kernel: 'nearest' }),
+        source: 'cloudflare',
+      }
+    }
+    if (provider === 'local') {
+      throw new Error('PIXELATION_PROVIDER is set to local')
+    }
     const drawn = await generatePixelArt(imageBuffer, mimeType)
     return { sprite: await quantizeToSprite(drawn, { kernel: 'nearest' }), source: 'gemini' }
   } catch (err) {
