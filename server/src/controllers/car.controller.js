@@ -31,7 +31,7 @@ export async function uploadCar(req, res) {
 
   try {
     const original = await fs.readFile(req.file.path)
-    const sprite = await pixelateImage(original, req.file.mimetype)
+    const sprite = await pixelateImage(original)
     const spriteName = `${req.file.filename}-sprite.png`
     await fs.writeFile(path.join(path.dirname(req.file.path), spriteName), sprite)
     pixelImageUrl = `/uploads/${spriteName}`

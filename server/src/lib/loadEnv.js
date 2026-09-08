@@ -11,5 +11,5 @@ const repoRoot = path.resolve(serverRoot, '..')
 // Loaded first so it wins (dotenv does not overwrite already-set vars).
 dotenv.config({ path: path.join(repoRoot, '.env.local'), quiet: true })
 
-// App-specific settings (PORT, GEMINI_API_KEY, AWS_*) live in server/.env.
+// App-specific settings (PORT, AWS_*, BG_REMOVAL_TIMEOUT_MS) live in server/.env.
 dotenv.config({ path: path.join(serverRoot, '.env'), quiet: true })

@@ -13,7 +13,7 @@ You are assisting in the development of PixelRack, a hobbyist web application fo
 * Frontend: Functional React components, Hooks, strict PropTypes or TypeScript interfaces (if adopted later).
 * Backend: Express REST API, modular route controllers, async/await error handling.
 * General: Standard JS/ES6+ syntax. Avoid class components.
-* Pixelation Logic: Execute pixelation processing on the backend as a two-stage pipeline - the `@google/genai` SDK (Gemini API) normalizes background, angle, and style per a fixed prompt using the palette in `style.md`, then `sharp` deterministically quantizes colors to that palette and resizes to a fixed canvas for pixel-perfect grid alignment.
+* Pixelation Logic: Execute pixelation processing on the backend as a two-stage pipeline - `@imgly/background-removal-node` removes the photo background locally (in a child process, since it pins an older `sharp`), then `sharp` resizes to a fixed 64x48 canvas with nearest-neighbor and reduces to 32 colors. The reduction is a color-count cap, not a remap onto `style.md`'s UI palette: that palette has no red, orange, or yellow, so remapping onto it would make every car the same hue and defeat the point of recognizing your own cars.
 
 ## 4. Memory Anchoring
 * Always refer to the database schema in `flow.md` before suggesting backend changes.

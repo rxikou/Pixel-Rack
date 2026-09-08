@@ -5,7 +5,7 @@ function Footer() {
       <span className="mx-2 text-accent-blue/40">|</span>
       Est. 2026
       <span className="mx-2 text-accent-blue/40">|</span>
-      Built with Gemini &amp; React Vite
+      Built with React &amp; Vite
     </footer>
   )
 }

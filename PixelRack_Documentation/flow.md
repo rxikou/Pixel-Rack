@@ -36,9 +36,11 @@ Seeded by `server/prisma/seed.js` (`node prisma/seed.js`).
 ## 3. API Request Flow (Upload)
 1. Client POSTs image payload to `/api/cars/upload`.
 2. Express backend verifies the Neon Auth JWT (from the `Authorization` header) against Neon's JWKS endpoint.
-3. Express calls the Gemini API via `@google/genai` with the original photo and a fixed prompt (referencing the `style.md` palette) instructing it to remove the background and render the car as a normalized retro pixel art sprite.
-4. Express passes the Gemini output to `sharp`, which quantizes colors to the locked palette and resizes/crops to a fixed canvas so the sprite is pixel-perfect and grid-aligned.
-5. Backend uploads final image to cloud storage (e.g., AWS S3).
+3. Express runs `@imgly/background-removal-node` in a child process to cut the car out of its photo background, leaving it on transparency.
+4. Express passes that cutout to `sharp`, which resizes to a fixed 64x48 canvas with nearest-neighbor and reduces to 32 colors so the sprite is pixel-perfect and grid-aligned.
+5. Backend writes the sprite next to the original and serves both from `/uploads` (cloud storage such as AWS S3 is still planned).
 6. Backend saves image URLs and metadata to PostgreSQL.
 7. Backend returns new Car object to React frontend.
 8. React updates global state and renders the new pixel car on the rack.
+
+If pixelation fails, the car is still saved with `pixel_image_url` null and the reason is returned as `pixelationError`; the client shows a placeholder sprite and surfaces the message rather than losing the upload.

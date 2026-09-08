@@ -16,7 +16,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@google/genai": "^2.21.0",
+    "@imgly/background-removal-node": "^1.4.5",
     "@prisma/adapter-neon": "^7.10.0",
     "@prisma/client": "^7.10.0",
     "cors": "^2.8.6",
@@ -47,6 +47,9 @@
     "prisma@7.10.0": true,
     "@prisma/engines@7.10.0": true,
     "@google/genai@2.21.0": true,
-    "protobufjs@7.6.6": true
+    "protobufjs@7.6.6": true,
+    "onnxruntime-node@1.17.3": true,
+    "sharp@0.32.6": true,
+    "sharp@0.35.4": true
   }
 }
