@@ -17,9 +17,12 @@ const WORKER = path.join(here, 'removeBackgroundWorker.js')
 export const SPRITE_WIDTH = 64
 export const SPRITE_HEIGHT = 48
 
-// Colour count for the sprite. Low enough for a flat, banded 16-bit look,
-// high enough that each car keeps its own recognisable body colour.
-export const SPRITE_COLOURS = 32
+// Colour cap for the sprite. Measured, not guessed: sharp only actually
+// quantizes at low values here. At `colours: 32` a test sprite still came out
+// with 49 distinct colours (no reduction at all); at 16 it reduces to ~14 and
+// produces the flat banding that reads as 16-bit. Raising this back toward 32
+// silently disables the quantization.
+export const SPRITE_COLOURS = 16
 
 // Background removal is model inference on CPU; a few seconds is normal, but
 // it must not be able to hang an upload request forever.
