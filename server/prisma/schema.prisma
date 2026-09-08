@@ -20,10 +20,11 @@ model User {
 }
 
 model Car {
-  id               String   @id @default(uuid())
-  userId           String   @map("user_id")
-  originalImageUrl String   @map("original_image_url")
-  pixelImageUrl    String   @map("pixel_image_url")
+  id String @id @default(uuid())
+  userId String @map("user_id")
+  // Null until cloud image storage and the pixelation pipeline are wired up.
+  originalImageUrl String?  @map("original_image_url")
+  pixelImageUrl    String?  @map("pixel_image_url")
   name             String
   series           String?
   createdAt        DateTime @default(now()) @map("created_at")
@@ -34,10 +35,14 @@ model Car {
 }
 
 model Environment {
-  id            String  @id @default(uuid())
-  name          String
-  backgroundUrl String  @map("background_url")
+  // Seeded with stable string ids ("rack", "garage", "konbini") rather than
+  // UUIDs, so the client can map an environment to its scene renderer.
+  id   String @id
+  name String
+  // Null while environments are drawn in CSS; set once real art exists.
+  backgroundUrl String? @map("background_url")
   isPremium     Boolean @default(false) @map("is_premium")
+  sortOrder     Int     @default(0) @map("sort_order")
 
   @@map("environments")
 }

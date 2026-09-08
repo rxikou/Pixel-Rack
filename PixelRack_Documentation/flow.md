@@ -17,18 +17,21 @@ Table: Users (app profile only - credentials live in Neon Auth's own `neon_auth.
 
 Table: Cars
 - id (UUID, PK)
-- user_id (UUID, FK to Users)
-- original_image_url (String)
-- pixel_image_url (String)
+- user_id (String, FK to Users)
+- original_image_url (String, nullable - served from local disk until cloud storage is wired up)
+- pixel_image_url (String, nullable - stays null until the Gemini + sharp pipeline runs)
 - name (String)
 - series (String, nullable)
 - created_at (Timestamp)
 
 Table: Environments
-- id (UUID, PK)
+- id (String, PK - stable keys "rack" / "garage" / "konbini", not UUIDs, so the client can map each one to its scene renderer)
 - name (String)
-- background_url (String)
+- background_url (String, nullable - null while environments are drawn in CSS)
 - is_premium (Boolean)
+- sort_order (Int, controls display order in the gallery)
+
+Seeded by `server/prisma/seed.js` (`node prisma/seed.js`).
 
 ## 3. API Request Flow (Upload)
 1. Client POSTs image payload to `/api/cars/upload`.

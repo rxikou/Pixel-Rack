@@ -14,7 +14,10 @@ export function AuthProvider({ children }) {
     authClient
       .getSession()
       .then(({ data }) => {
-        if (isMounted) setUser(data?.session?.user ?? null)
+        // getSession resolves to { session, user } - user is a sibling of
+        // session, not nested inside it. Reading data.session.user here is
+        // what previously logged people out on every page refresh.
+        if (isMounted) setUser(data?.user ?? null)
       })
       .catch(() => {
         if (isMounted) setUser(null)

@@ -1,0 +1,62 @@
+import { apiFetch } from './apiClient'
+import { authClient } from './authClient'
+
+export function fetchCars() {
+  return apiFetch('/api/cars')
+}
+
+// XHR rather than fetch: it exposes real upload progress for the panel's bar.
+export async function uploadCar({ file, name, series, onProgress }) {
+  const { data } = await authClient.getSession()
+  const token = data?.session?.token
+
+  const form = new FormData()
+  form.append('image', file)
+  form.append('name', name)
+  if (series) form.append('series', series)
+
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest()
+    xhr.open('POST', `${import.meta.env.VITE_API_URL}/api/cars/upload`)
+    if (token) xhr.setRequestHeader('Authorization', `Bearer ${token}`)
+
+    xhr.upload.onprogress = (e) => {
+      if (e.lengthComputable && onProgress) {
+        onProgress(Math.round((e.loaded / e.total) * 100))
+      }
+    }
+
+    xhr.onload = () => {
+      let body
+      try {
+        body = JSON.parse(xhr.responseText)
+      } catch {
+        return reject(new Error('Unexpected server response'))
+      }
+      if (xhr.status >= 200 && xhr.status < 300) {
+        onProgress?.(100)
+        resolve(body.data)
+      } else {
+        reject(new Error(body.error || 'Upload failed'))
+      }
+    }
+
+    xhr.onerror = () => reject(new Error('Network error during upload'))
+    xhr.send(form)
+  })
+}
+
+export function updateCar(id, changes) {
+  return apiFetch(`/api/cars/${id}`, {
+    method: 'PATCH',
+    body: JSON.stringify(changes),
+  })
+}
+
+export function deleteCar(id) {
+  return apiFetch(`/api/cars/${id}`, { method: 'DELETE' })
+}
+
+export function fetchEnvironments() {
+  return apiFetch('/api/environments')
+}

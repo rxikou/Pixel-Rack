@@ -3,8 +3,8 @@ import PropTypes from 'prop-types'
 import BracketButton from './BracketButton'
 import Panel from './Panel'
 import PixelCarIcon from './PixelCarIcon'
-
-const PLACEHOLDER_COLORS = ['#f97316', '#38bdf8', '#f472b6', '#4ade80', '#facc15']
+import { uploadCar } from '../api/cars'
+import { spriteColorFor } from '../utils/spriteColor'
 
 function UploadPanel({ onUpload }) {
   const [file, setFile] = useState(null)
@@ -13,40 +13,13 @@ function UploadPanel({ onUpload }) {
   const [series, setSeries] = useState('')
   const [progress, setProgress] = useState(0)
   const [isProcessing, setIsProcessing] = useState(false)
-  const [spriteColor, setSpriteColor] = useState(null)
+  const [error, setError] = useState('')
 
   useEffect(() => {
     return () => {
       if (previewUrl) URL.revokeObjectURL(previewUrl)
     }
   }, [previewUrl])
-
-  useEffect(() => {
-    if (!isProcessing) return undefined
-
-    let current = 0
-    const interval = setInterval(() => {
-      current += 4
-      setProgress(current)
-
-      if (current >= 100) {
-        clearInterval(interval)
-        onUpload({
-          id: crypto.randomUUID(),
-          name,
-          series: series || 'Uncategorized',
-          color: spriteColor,
-        })
-        setIsProcessing(false)
-        setFile(null)
-        setPreviewUrl('')
-        setName('')
-        setSeries('')
-        setProgress(0)
-      }
-    }, 50)
-    return () => clearInterval(interval)
-  }, [isProcessing, name, series, spriteColor, onUpload])
 
   function handleFileChange(e) {
     const selected = e.target.files?.[0]
@@ -55,14 +28,31 @@ function UploadPanel({ onUpload }) {
     setPreviewUrl(URL.createObjectURL(selected))
   }
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault()
     if (!name || !file) return
 
-    setSpriteColor(
-      PLACEHOLDER_COLORS[Math.floor(Math.random() * PLACEHOLDER_COLORS.length)],
-    )
+    setError('')
+    setProgress(0)
     setIsProcessing(true)
+    try {
+      const car = await uploadCar({
+        file,
+        name,
+        series,
+        onProgress: setProgress,
+      })
+      onUpload(car)
+      setFile(null)
+      setPreviewUrl('')
+      setName('')
+      setSeries('')
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setIsProcessing(false)
+      setProgress(0)
+    }
   }
 
   return (
@@ -79,7 +69,7 @@ function UploadPanel({ onUpload }) {
         {isProcessing ? (
           <div className="flex flex-col gap-3 border-2 border-accent-blue/50 bg-bg-primary p-3">
             <p className="truncate font-mono text-xs text-text-secondary">
-              Transforming "{name}"
+              Uploading "{name}"
             </p>
 
             <div className="flex items-center justify-center gap-3">
@@ -100,7 +90,10 @@ function UploadPanel({ onUpload }) {
 
               <div className="flex flex-col items-center gap-1">
                 <div className="flex h-20 w-20 items-center justify-center border-2 border-accent-blue bg-bg-container">
-                  <PixelCarIcon color={spriteColor} className="h-10 w-16" />
+                  <PixelCarIcon
+                    color={spriteColorFor(name || 'pending')}
+                    className="h-10 w-16 opacity-60"
+                  />
                 </div>
                 <span className="font-mono text-[10px] uppercase tracking-wide text-accent-blue">
                   Pixel Sprite
@@ -120,6 +113,11 @@ function UploadPanel({ onUpload }) {
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="flex flex-col gap-2">
+            {error && (
+              <p className="border-2 border-accent-pink/60 px-2 py-1.5 font-mono text-xs text-accent-pink">
+                {error}
+              </p>
+            )}
             <label className="cursor-pointer border-2 border-dashed border-text-secondary p-4 text-center font-mono text-xs text-text-secondary hover:border-accent-blue">
               {file ? file.name : 'Drag & drop a photo, or click to choose'}
               <input

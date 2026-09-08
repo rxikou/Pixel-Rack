@@ -1,17 +1,50 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import Rack from '../components/Rack'
 import RackHeader from '../components/RackHeader'
 import EnvironmentGallery from '../components/EnvironmentGallery'
 import UploadPanel from '../components/UploadPanel'
-import { mockCars, environments } from '../data/mockData'
+import {
+  fetchCars,
+  fetchEnvironments,
+  deleteCar as deleteCarRequest,
+} from '../api/cars'
 
 function DashboardPage() {
-  const [cars, setCars] = useState(mockCars)
-  const [environmentId, setEnvironmentId] = useState(environments[0].id)
+  const [cars, setCars] = useState([])
+  const [environments, setEnvironments] = useState([])
+  const [environmentId, setEnvironmentId] = useState(null)
   const [sort, setSort] = useState('shelf')
   const [seriesFilter, setSeriesFilter] = useState('all')
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState('')
+
+  useEffect(() => {
+    let cancelled = false
+
+    async function load() {
+      try {
+        const [carList, envList] = await Promise.all([
+          fetchCars(),
+          fetchEnvironments(),
+        ])
+        if (cancelled) return
+        setCars(carList)
+        setEnvironments(envList)
+        setEnvironmentId((current) => current ?? envList[0]?.id ?? null)
+      } catch (err) {
+        if (!cancelled) setError(err.message)
+      } finally {
+        if (!cancelled) setIsLoading(false)
+      }
+    }
+
+    load()
+    return () => {
+      cancelled = true
+    }
+  }, [])
 
   const seriesOptions = useMemo(
     () => [...new Set(cars.map((car) => car.series || 'Uncategorized'))],
@@ -36,8 +69,15 @@ function DashboardPage() {
     [visibleCars],
   )
 
-  function handleDelete(id) {
-    setCars((prev) => prev.filter((car) => car.id !== id))
+  async function handleDelete(id) {
+    const previous = cars
+    setCars((prev) => prev.filter((car) => car.id !== id)) // optimistic
+    try {
+      await deleteCarRequest(id)
+    } catch (err) {
+      setCars(previous) // roll back so the UI cannot drift from the server
+      setError(err.message)
+    }
   }
 
   function handleUpload(newCar) {
@@ -56,6 +96,12 @@ function DashboardPage() {
         </aside>
 
         <section className="flex flex-col gap-6">
+          {error && (
+            <p className="border-2 border-accent-pink/60 bg-bg-container/60 px-3 py-2 font-mono text-xs text-accent-pink">
+              {error}
+            </p>
+          )}
+
           <div className="border-2 border-accent-blue/25 bg-bg-container/40 p-4">
             <RackHeader
               rackName={activeEnvironment?.name ?? ''}
@@ -69,19 +115,29 @@ function DashboardPage() {
             />
 
             <div className="pt-4">
-              <Rack
-                cars={visibleCars}
-                environmentId={environmentId}
-                onDelete={handleDelete}
-              />
+              {isLoading ? (
+                <p className="py-16 text-center font-mono text-sm text-text-secondary">
+                  Loading your rack...
+                </p>
+              ) : (
+                environmentId && (
+                  <Rack
+                    cars={visibleCars}
+                    environmentId={environmentId}
+                    onDelete={handleDelete}
+                  />
+                )
+              )}
             </div>
           </div>
 
-          <EnvironmentGallery
-            environments={environments}
-            activeId={environmentId}
-            onSelect={setEnvironmentId}
-          />
+          {environments.length > 0 && environmentId && (
+            <EnvironmentGallery
+              environments={environments}
+              activeId={environmentId}
+              onSelect={setEnvironmentId}
+            />
+          )}
         </section>
       </main>
 
