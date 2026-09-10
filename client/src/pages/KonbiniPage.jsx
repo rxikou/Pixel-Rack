@@ -1,12 +1,13 @@
 import ScenePage from '../components/ScenePage'
 import konbiniBackground from '../assets/konbini-background.webp'
 
-// Centered on 3 of the artwork's painted bays (skipping the leftmost one,
-// which sits behind the phone booth pole).
+// Centred on the three bays the v2 artwork actually paints. The lines were
+// measured off the image rather than eyeballed: they sit at 17.9/39.5/60.5/81.7
+// percent, so the bay centres land near 30, 50 and 70 percent.
 const SLOTS = [
-  { left: '22%', top: '72%', width: '18%', height: '22%' },
-  { left: '41%', top: '72%', width: '18%', height: '22%' },
-  { left: '60%', top: '72%', width: '18%', height: '22%' },
+  { left: '20.5%', top: '74%', width: '19%', height: '20%' },
+  { left: '40.5%', top: '74%', width: '19%', height: '20%' },
+  { left: '60.5%', top: '74%', width: '19%', height: '20%' },
 ]
 
 function KonbiniPage() {
