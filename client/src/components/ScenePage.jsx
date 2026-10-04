@@ -95,26 +95,26 @@ function ScenePage({ environmentId, title, blurb, background, slotPositions, eff
     <div className="flex min-h-screen flex-col">
       <Navbar />
 
-      <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-4 px-6 py-8">
+      <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-3 px-3 py-4 sm:gap-4 sm:px-6 sm:py-8">
         {/* Environment Quick Switch Navigation */}
         <nav
           aria-label="Scene navigation"
-          className="flex flex-wrap items-center justify-between gap-3 border-2 border-accent-blue/30 bg-bg-container/60 p-2.5"
+          className="flex flex-wrap items-center justify-between gap-2 border-2 border-accent-blue/30 bg-bg-container/60 p-2 sm:p-2.5"
         >
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="font-mono text-xs uppercase tracking-wide text-text-secondary">
+          <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+            <span className="font-mono text-[11px] uppercase tracking-wide text-text-secondary sm:text-xs">
               Environment:
             </span>
-            <div className="flex flex-wrap gap-1.5 font-mono text-xs font-bold uppercase">
+            <div className="flex flex-wrap gap-1 font-mono text-[11px] font-bold uppercase sm:gap-1.5 sm:text-xs">
               <Link
                 to="/dashboard"
-                className="pixel-btn bg-slate-800 px-3 py-1 text-white/80 hover:text-white"
+                className="pixel-btn bg-slate-800 px-2.5 py-1 text-white/80 hover:text-white sm:px-3"
               >
                 Wooden Shelf
               </Link>
               <Link
                 to="/garage"
-                className={`pixel-btn px-3 py-1 ${
+                className={`pixel-btn px-2.5 py-1 sm:px-3 ${
                   environmentId === 'garage'
                     ? 'border-amber-400 bg-amber-500 font-bold text-slate-950'
                     : 'bg-slate-800 text-white/80 hover:text-white'
@@ -124,7 +124,7 @@ function ScenePage({ environmentId, title, blurb, background, slotPositions, eff
               </Link>
               <Link
                 to="/konbini"
-                className={`pixel-btn px-3 py-1 ${
+                className={`pixel-btn px-2.5 py-1 sm:px-3 ${
                   environmentId === 'konbini'
                     ? 'border-amber-400 bg-amber-500 font-bold text-slate-950'
                     : 'bg-slate-800 text-white/80 hover:text-white'
@@ -137,7 +137,7 @@ function ScenePage({ environmentId, title, blurb, background, slotPositions, eff
 
           <Link
             to="/dashboard"
-            className="flex items-center gap-1 font-mono text-xs text-accent-blue hover:text-amber-300 hover:underline"
+            className="flex items-center gap-1 font-mono text-[11px] text-accent-blue hover:text-amber-300 hover:underline sm:text-xs"
           >
             <span>&larr;</span> Back to My Rack
           </Link>
@@ -176,7 +176,7 @@ function ScenePage({ environmentId, title, blurb, background, slotPositions, eff
                 return (
                   <div
                     key={i}
-                    className="absolute"
+                    className="group absolute"
                     style={{
                       left: pos.left,
                       top: pos.top,
@@ -185,44 +185,59 @@ function ScenePage({ environmentId, title, blurb, background, slotPositions, eff
                     }}
                   >
                     {car ? (
-                      <button
-                        type="button"
-                        onClick={() => playEffect(i)}
-                        onDoubleClick={() => setPickingSlot(i)}
-                        title={`${car.name} - click to ${effect === 'wash' ? 'wash' : 'admire'}, double click to change`}
-                        className="relative h-full w-full cursor-pointer"
-                      >
-                        <SlotCar car={car} />
+                      <div className="relative h-full w-full">
+                        <button
+                          type="button"
+                          onClick={() => playEffect(i)}
+                          onDoubleClick={() => setPickingSlot(i)}
+                          title={`${car.name} - click to ${effect === 'wash' ? 'wash' : 'admire'}, double click or tap edit to change`}
+                          className="relative h-full w-full cursor-pointer"
+                        >
+                          <SlotCar car={car} />
 
-                        {activeEffect === i && effect === 'wash' && (
-                          <>
-                            <span className="pointer-events-none absolute inset-0 overflow-hidden">
-                              <span className="animate-shine-across absolute inset-y-0 w-1/3 bg-white/50" />
-                            </span>
-                            {[10, 35, 60, 85].map((x, b) => (
-                              <span
-                                key={x}
-                                className="animate-bubble-rise pointer-events-none absolute bottom-2 h-3 w-3 rounded-full border-2 border-white/70 bg-sky-200/50"
-                                style={{ left: `${x}%`, animationDelay: `${b * 120}ms` }}
-                              />
-                            ))}
-                          </>
-                        )}
-
-                        {activeEffect === i && effect === 'sparkle' && (
-                          <>
-                            {[[15, 10], [70, 5], [45, 60], [85, 45]].map(([x, y], s) => (
-                              <span
-                                key={`${x}-${y}`}
-                                className="animate-sparkle-pop pointer-events-none absolute font-pixel text-lg text-amber-200"
-                                style={{ left: `${x}%`, top: `${y}%`, animationDelay: `${s * 140}ms` }}
-                              >
-                                +
+                          {activeEffect === i && effect === 'wash' && (
+                            <>
+                              <span className="pointer-events-none absolute inset-0 overflow-hidden">
+                                <span className="animate-shine-across absolute inset-y-0 w-1/3 bg-white/50" />
                               </span>
-                            ))}
-                          </>
-                        )}
-                      </button>
+                              {[10, 35, 60, 85].map((x, b) => (
+                                <span
+                                  key={x}
+                                  className="animate-bubble-rise pointer-events-none absolute bottom-2 h-3 w-3 rounded-full border-2 border-white/70 bg-sky-200/50"
+                                  style={{ left: `${x}%`, animationDelay: `${b * 120}ms` }}
+                                />
+                              ))}
+                            </>
+                          )}
+
+                          {activeEffect === i && effect === 'sparkle' && (
+                            <>
+                              {[[15, 10], [70, 5], [45, 60], [85, 45]].map(([x, y], s) => (
+                                <span
+                                  key={`${x}-${y}`}
+                                  className="animate-sparkle-pop pointer-events-none absolute font-pixel text-lg text-amber-200"
+                                  style={{ left: `${x}%`, top: `${y}%`, animationDelay: `${s * 140}ms` }}
+                                >
+                                  +
+                                </span>
+                              ))}
+                            </>
+                          )}
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            setPickingSlot(i)
+                          }}
+                          aria-label={`Change car in slot ${i + 1}`}
+                          className="absolute -top-1 -right-1 z-20 flex h-6 w-6 items-center justify-center rounded border border-amber-400/80 bg-slate-950/90 text-xs text-amber-300 shadow hover:bg-amber-400 hover:text-slate-950 transition-colors sm:opacity-0 sm:group-hover:opacity-100 sm:-top-2 sm:-right-2"
+                          title="Change car"
+                        >
+                          &#9998;
+                        </button>
+                      </div>
                     ) : (
                       <button
                         type="button"
@@ -242,7 +257,7 @@ function ScenePage({ environmentId, title, blurb, background, slotPositions, eff
 
           <p className="mt-3 font-mono text-[11px] text-text-secondary">
             Click an empty slot to place a car. Click a placed car to{' '}
-            {effect === 'wash' ? 'wash it' : 'admire it'}, double click to swap it out.
+            {effect === 'wash' ? 'wash it' : 'admire it'}, double click or tap edit to swap it out.
           </p>
         </Panel>
       </main>

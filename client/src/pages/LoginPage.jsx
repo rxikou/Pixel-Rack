@@ -34,7 +34,7 @@ function LoginPage() {
 
       <form
         onSubmit={handleSubmit}
-        className="flex w-full max-w-sm flex-col gap-3 border-2 border-bg-container bg-bg-container/40 p-6"
+        className="flex w-full max-w-sm flex-col gap-3 border-2 border-bg-container bg-bg-container/40 p-4 sm:p-6"
       >
         <h1 className="font-pixel text-xl uppercase tracking-wide text-accent-blue">
           Log In
@@ -48,7 +48,7 @@ function LoginPage() {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
-          className="border-2 border-bg-primary bg-bg-primary px-3 py-2 font-mono text-sm text-text-primary outline-none focus:border-accent-blue"
+          className="border-2 border-bg-primary bg-bg-primary px-3 py-2 font-mono text-base text-text-primary outline-none focus:border-accent-blue sm:text-sm"
         />
         <input
           type="password"
@@ -56,7 +56,7 @@ function LoginPage() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
-          className="border-2 border-bg-primary bg-bg-primary px-3 py-2 font-mono text-sm text-text-primary outline-none focus:border-accent-blue"
+          className="border-2 border-bg-primary bg-bg-primary px-3 py-2 font-mono text-base text-text-primary outline-none focus:border-accent-blue sm:text-sm"
         />
 
         <Button type="submit" variant="primary" disabled={isSubmitting} className="w-full">

@@ -206,8 +206,8 @@ function UploadPanel({ onUpload }) {
                 {notice}
               </p>
             )}
-            <label className="cursor-pointer border-2 border-dashed border-text-secondary p-4 text-center font-mono text-xs text-text-secondary hover:border-accent-blue">
-              {file ? file.name : 'Drag & drop a photo, or click to choose'}
+            <label className="cursor-pointer border-2 border-dashed border-text-secondary p-3 text-center font-mono text-xs text-text-secondary hover:border-accent-blue sm:p-4">
+              {file ? file.name : 'Tap or drag a photo to choose'}
               <input
                 type="file"
                 accept="image/*"
@@ -227,14 +227,14 @@ function UploadPanel({ onUpload }) {
               value={name}
               onChange={(e) => setName(e.target.value)}
               required
-              className="border-2 border-bg-primary bg-bg-primary px-3 py-2 font-mono text-sm text-text-primary outline-none focus:border-accent-blue"
+              className="border-2 border-bg-primary bg-bg-primary px-3 py-2 font-mono text-base text-text-primary outline-none focus:border-accent-blue sm:text-sm"
             />
             <input
               type="text"
               placeholder="Series (optional)"
               value={series}
               onChange={(e) => setSeries(e.target.value)}
-              className="border-2 border-bg-primary bg-bg-primary px-3 py-2 font-mono text-sm text-text-primary outline-none focus:border-accent-blue"
+              className="border-2 border-bg-primary bg-bg-primary px-3 py-2 font-mono text-base text-text-primary outline-none focus:border-accent-blue sm:text-sm"
             />
             <BracketButton type="submit" className="mt-1 w-full py-2">
               Upload &amp; Transform

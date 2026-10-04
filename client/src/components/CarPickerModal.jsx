@@ -10,17 +10,17 @@ CarThumb.propTypes = { car: PropTypes.object.isRequired }
 
 function CarPickerModal({ cars, placedCarIds, onPick, onClear, onClose, canClear }) {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4">
-      <div className="pixel-panel flex max-h-[80vh] w-full max-w-2xl flex-col bg-bg-container">
-        <header className="flex items-center justify-between border-b-[3px] border-[#05070d] bg-sky-700 px-4 py-2">
-          <h2 className="pixel-text font-pixel text-xl uppercase leading-none text-white">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-3 sm:px-4">
+      <div className="pixel-panel flex max-h-[90dvh] sm:max-h-[80vh] w-full max-w-2xl flex-col bg-bg-container">
+        <header className="flex items-center justify-between border-b-[3px] border-[#05070d] bg-sky-700 px-3 py-2 sm:px-4">
+          <h2 className="pixel-text font-pixel text-lg sm:text-xl uppercase leading-none text-white">
             Choose a car
           </h2>
           <button
             type="button"
             onClick={onClose}
             aria-label="Close"
-            className="pixel-text cursor-pointer font-pixel text-xl leading-none text-white hover:text-amber-300"
+            className="pixel-text flex h-8 w-8 items-center justify-center cursor-pointer font-pixel text-2xl leading-none text-white hover:text-amber-300"
           >
             &times;
           </button>

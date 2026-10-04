@@ -51,20 +51,20 @@ function Navbar() {
   }
 
   return (
-    <header className="sticky top-0 z-40 flex flex-wrap items-center justify-between gap-4 border-b-[3px] border-[#05070d] bg-sky-800 px-6 py-2 shadow-[0_4px_0_#05070d]">
-      <div className="flex flex-wrap items-center gap-4 sm:gap-6">
-        <Link to="/">
-          <img src={logo} alt="PixelRack" className="pixelated h-16" />
+    <header className="sticky top-0 z-40 flex flex-wrap items-center justify-between gap-2.5 border-b-[3px] border-[#05070d] bg-sky-800 px-3 py-1.5 shadow-[0_4px_0_#05070d] sm:gap-4 sm:px-6 sm:py-2">
+      <div className="flex flex-wrap items-center gap-3 sm:gap-6">
+        <Link to="/" className="shrink-0">
+          <img src={logo} alt="PixelRack" className="pixelated h-11 sm:h-14 md:h-16" />
         </Link>
-        <nav className="flex flex-wrap gap-3 font-mono text-xs font-medium uppercase tracking-wide sm:gap-5 md:gap-6">
+        <nav className="flex items-center gap-2 overflow-x-auto font-mono text-[10px] font-medium uppercase tracking-wide sm:gap-5 sm:text-xs md:gap-6">
           {NAV_LINKS.map((link) => (
             <Link
               key={link.to}
               to={link.to}
               className={navItemClass(pathname === link.to)}
             >
-              <img src={link.icon} alt="" className="pixelated h-8 w-8" />
-              {link.label}
+              <img src={link.icon} alt="" className="pixelated h-6 w-6 sm:h-8 sm:w-8" />
+              <span>{link.label}</span>
             </Link>
           ))}
           <button
@@ -72,15 +72,15 @@ function Navbar() {
             onClick={handleUploadClick}
             className={`cursor-pointer ${navItemClass(false)}`}
           >
-            <img src={uploadIcon} alt="" className="pixelated h-8 w-8" />
-            Upload
+            <img src={uploadIcon} alt="" className="pixelated h-6 w-6 sm:h-8 sm:w-8" />
+            <span>Upload</span>
           </button>
         </nav>
       </div>
 
-      <div className="flex items-center gap-3 font-mono text-sm text-text-secondary">
-        <span className="pixel-inset max-w-[16rem] truncate bg-slate-900/80 px-3 py-1.5 uppercase tracking-wide">
-          <span className="text-text-secondary/70">Profile: </span>
+      <div className="flex items-center gap-2 font-mono text-xs text-text-secondary sm:gap-3 sm:text-sm">
+        <span className="pixel-inset max-w-[8rem] truncate bg-slate-900/80 px-2 py-1 text-[11px] uppercase tracking-wide sm:max-w-[16rem] sm:px-3 sm:py-1.5 sm:text-sm">
+          <span className="hidden text-text-secondary/70 sm:inline">Profile: </span>
           <span className="text-text-primary">
             {user ? (user.name ?? user.email) : 'Guest'}
           </span>
@@ -90,7 +90,7 @@ function Navbar() {
           <button
             type="button"
             onClick={handleSignOut}
-            className="pixel-btn pixel-text cursor-pointer bg-red-500 px-3 py-1.5 font-pixel text-base uppercase leading-none tracking-wide text-white hover:brightness-110"
+            className="pixel-btn pixel-text cursor-pointer bg-red-500 px-2 py-1 font-pixel text-xs uppercase leading-none tracking-wide text-white hover:brightness-110 sm:px-3 sm:py-1.5 sm:text-base"
           >
             Log Out
           </button>

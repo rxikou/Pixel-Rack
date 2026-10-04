@@ -1,9 +1,8 @@
+import { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import ShelfCarSlot from './ShelfCarSlot'
 import ShelfLabel from './ShelfLabel'
 import EnvironmentScene from './EnvironmentScene'
-
-const ROW_SIZE = 5
 
 const ENVIRONMENT_STYLES = {
   rack: {
@@ -53,6 +52,28 @@ function chunkRows(cars, size) {
 function Rack({ cars, environmentId, onDelete }) {
   const shelves = groupByShelf(cars)
   const styles = ENVIRONMENT_STYLES[environmentId]
+  const [rowSize, setRowSize] = useState(() => {
+    if (typeof window !== 'undefined') {
+      if (window.innerWidth < 640) return 3
+      if (window.innerWidth < 1024) return 4
+    }
+    return 5
+  })
+
+  useEffect(() => {
+    function handleResize() {
+      if (window.innerWidth < 640) {
+        setRowSize(3)
+      } else if (window.innerWidth < 1024) {
+        setRowSize(4)
+      } else {
+        setRowSize(5)
+      }
+    }
+    handleResize()
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
 
   return (
     <div
@@ -71,7 +92,7 @@ function Rack({ cars, environmentId, onDelete }) {
 
       {/* mt-auto stands the shelves on the floor of the scene rather than
           leaving them floating up among the ceiling beams */}
-      <div className="relative mt-auto flex flex-col gap-1 px-3 py-3">
+      <div className="relative mt-auto flex flex-col gap-1 px-1.5 py-2 sm:px-3 sm:py-3">
         {cars.length === 0 && (
           <p className="py-12 text-center font-mono text-text-secondary">
             No cars yet. Upload your first Hot Wheels to fill the rack.
@@ -79,7 +100,7 @@ function Rack({ cars, environmentId, onDelete }) {
         )}
 
         {[...shelves.entries()].map(([shelf, shelfCars], shelfIndex) =>
-          chunkRows(shelfCars, ROW_SIZE).map((row, rowIndex) => (
+          chunkRows(shelfCars, rowSize).map((row, rowIndex) => (
             <div key={`${shelf}-${rowIndex}`} className="flex flex-col">
               {rowIndex === 0 && (
                 <ShelfLabel index={shelfIndex + 1} name={shelf.toUpperCase()} />
@@ -87,13 +108,13 @@ function Rack({ cars, environmentId, onDelete }) {
 
               {/* recessed cavity the cars stand inside */}
               <div
-                className={`flex items-end justify-start px-3 pt-6 pb-0 sm:px-6 sm:pt-8 shadow-[inset_0_14px_18px_-8px_rgba(0,0,0,0.95),inset_6px_0_10px_-8px_rgba(0,0,0,0.8),inset_-6px_0_10px_-8px_rgba(0,0,0,0.8)] ${styles.cavity}`}
+                className={`flex items-end justify-start px-1.5 pt-6 pb-0 sm:px-6 sm:pt-8 shadow-[inset_0_14px_18px_-8px_rgba(0,0,0,0.95),inset_6px_0_10px_-8px_rgba(0,0,0,0.8),inset_-6px_0_10px_-8px_rgba(0,0,0,0.8)] ${styles.cavity}`}
               >
                 {row.map((car) => (
                   <div
                     key={car.id}
-                    style={{ width: `${100 / ROW_SIZE}%` }}
-                    className="shrink-0 px-2 sm:px-3.5"
+                    style={{ width: `${100 / rowSize}%` }}
+                    className="shrink-0 px-1 sm:px-3.5"
                   >
                     <ShelfCarSlot car={car} onDelete={onDelete} />
                   </div>

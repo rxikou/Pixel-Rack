@@ -70,10 +70,10 @@ function HeroButton({ to, icon, children, variant = 'secondary' }) {
   return (
     <Link
       to={to}
-      className={`flex min-w-[11rem] items-center justify-center gap-3 rounded-lg border-2 px-7 py-3.5 text-white shadow-[0_4px_0_rgba(5,7,13,0.55)] transition hover:brightness-110 ${SKINS[variant]}`}
+      className={`flex w-full sm:w-auto min-w-[9rem] sm:min-w-[11rem] items-center justify-center gap-2 sm:gap-3 rounded-lg border-2 px-5 py-2.5 sm:px-7 sm:py-3.5 text-white shadow-[0_4px_0_rgba(5,7,13,0.55)] transition hover:brightness-110 ${SKINS[variant]}`}
     >
-      {icon && <img src={icon} alt="" className="pixelated h-7 w-7" />}
-      <span className="pixel-text font-pixel text-2xl uppercase leading-none tracking-wide">
+      {icon && <img src={icon} alt="" className="pixelated h-6 w-6 sm:h-7 sm:w-7" />}
+      <span className="pixel-text font-pixel text-xl sm:text-2xl uppercase leading-none tracking-wide">
         {children}
       </span>
     </Link>
@@ -139,7 +139,7 @@ function MusicToggle() {
         onClick={toggle}
         aria-label={muted ? 'Play background music' : 'Mute background music'}
         aria-pressed={!muted}
-        className="pixel-text absolute right-4 top-4 z-10 flex items-center gap-2 rounded-md border-2 border-slate-500/70 bg-slate-900/80 px-3 py-2 font-mono text-[11px] uppercase tracking-wide text-white transition hover:bg-slate-800/80"
+        className="pixel-text absolute right-3 top-3 z-10 flex items-center gap-1.5 rounded-md border-2 border-slate-500/70 bg-slate-900/80 px-2 py-1.5 font-mono text-[10px] uppercase tracking-wide text-white transition hover:bg-slate-800/80 sm:right-4 sm:top-4 sm:gap-2 sm:px-3 sm:py-2 sm:text-[11px]"
       >
         <span aria-hidden="true">{muted ? '🔇' : '🔊'}</span>
         {muted ? 'Music Off' : 'Music On'}
@@ -163,7 +163,7 @@ function Hero({ user }) {
 
       <MusicToggle />
 
-      <div className="relative w-full px-6 py-14">
+      <div className="relative w-full px-4 py-12 sm:px-6 sm:py-14">
         <div className="mx-auto flex max-w-2xl flex-col items-center text-center">
           <img
             src={startingArt}
@@ -171,16 +171,16 @@ function Hero({ user }) {
             className="pixelated w-[min(86vw,60vh,36rem)] drop-shadow-[0_6px_0_rgba(5,7,13,0.45)]"
           />
 
-          <div className="mt-6 flex items-center gap-3 font-pixel text-xl uppercase tracking-[0.15em] text-white sm:text-2xl">
+          <div className="mt-5 flex items-center gap-2 font-pixel text-lg uppercase tracking-[0.12em] text-white sm:mt-6 sm:gap-3 sm:text-2xl sm:tracking-[0.15em]">
             {STAGES.map((stage, i) => (
-              <span key={stage} className="flex items-center gap-3">
+              <span key={stage} className="flex items-center gap-2 sm:gap-3">
                 {i > 0 && <span className="text-accent-blue">&gt;</span>}
                 <span className="pixel-text">{stage}</span>
               </span>
             ))}
           </div>
 
-          <div className="mt-8 flex flex-wrap justify-center gap-4">
+          <div className="mt-6 flex w-full max-w-sm flex-col items-center justify-center gap-3 sm:mt-8 sm:max-w-none sm:flex-row sm:gap-4">
             {user ? (
               <HeroButton to="/dashboard" variant="primary">
                 Enter My Rack
@@ -210,7 +210,7 @@ function LandingPage() {
     <div className="flex min-h-screen flex-col">
       <Hero user={user} />
 
-      <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-4 px-6 py-8">
+      <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-4 px-3 py-6 sm:px-6 sm:py-8">
         <Panel title="How It Works">
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
             {STEPS.map(({ step, title, body, badge, rule }, i) => (

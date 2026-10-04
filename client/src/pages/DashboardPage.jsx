@@ -102,19 +102,15 @@ function DashboardPage() {
     <div className="flex min-h-screen flex-col">
       <Navbar />
 
-      <main className="mx-auto grid w-full max-w-6xl flex-1 grid-cols-1 gap-6 px-6 py-8 lg:grid-cols-[320px_1fr]">
-        <aside>
-          <UploadPanel onUpload={handleUpload} />
-        </aside>
-
-        <section className="flex flex-col gap-6">
+      <main className="mx-auto grid w-full max-w-6xl flex-1 grid-cols-1 gap-4 px-3 py-4 sm:gap-6 sm:px-6 sm:py-8 lg:grid-cols-[320px_1fr]">
+        <section className="order-1 flex flex-col gap-6 lg:order-2">
           {error && (
             <p className="border-2 border-accent-pink/60 bg-bg-container/60 px-3 py-2 font-mono text-xs text-accent-pink">
               {error}
             </p>
           )}
 
-          <div className="border-2 border-accent-blue/25 bg-bg-container/40 p-4">
+          <div className="border-2 border-accent-blue/25 bg-bg-container/40 p-2.5 sm:p-4">
             <RackHeader
               rackName="The Wooden Shelf"
               carCount={visibleCars.length}
@@ -145,6 +141,10 @@ function DashboardPage() {
             <EnvironmentGallery environments={environments} />
           )}
         </section>
+
+        <aside className="order-2 lg:order-1">
+          <UploadPanel onUpload={handleUpload} />
+        </aside>
       </main>
 
       <Footer />

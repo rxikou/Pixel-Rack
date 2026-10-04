@@ -8,7 +8,7 @@ const SORTS = [
 ]
 
 const selectClass =
-  'cursor-pointer border-2 border-accent-blue/30 bg-bg-primary px-2 py-1 font-mono text-xs uppercase text-accent-blue outline-none hover:border-accent-blue focus:border-accent-blue'
+  'cursor-pointer border-2 border-accent-blue/30 bg-bg-primary px-2 py-1 font-mono text-base sm:text-xs uppercase text-accent-blue outline-none hover:border-accent-blue focus:border-accent-blue'
 
 function RackHeader({
   rackName,

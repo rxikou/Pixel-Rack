@@ -63,14 +63,14 @@ function ImageCropper({ src, crop, onChange }) {
   return (
     <div className="flex flex-col gap-2">
       <p className="font-mono text-[11px] text-text-secondary">
-        Drag the box over just the car. Packaging and background get cut away.
+        Drag or resize the box over the car. Packaging and background get cut away.
       </p>
       <div
         ref={frameRef}
         onPointerMove={onPointerMove}
         onPointerUp={endDrag}
         onPointerLeave={endDrag}
-        className="relative select-none overflow-hidden border-2 border-bg-primary bg-bg-primary"
+        className="touch-none relative select-none overflow-hidden border-2 border-bg-primary bg-bg-primary"
       >
         <img
           ref={imgRef}
@@ -86,7 +86,7 @@ function ImageCropper({ src, crop, onChange }) {
         <div
           onPointerDown={(e) => startDrag('move', e)}
           style={{ left: pct(crop.x), top: pct(crop.y), width: pct(crop.w), height: pct(crop.h) }}
-          className="absolute cursor-move border-2 border-accent-blue shadow-[0_0_0_9999px_rgba(15,23,42,0.0)]"
+          className="touch-none absolute cursor-move border-2 border-accent-blue shadow-[0_0_0_9999px_rgba(15,23,42,0.0)]"
         >
           {/* re-show the image inside the crop window at full brightness */}
           <div
@@ -100,7 +100,7 @@ function ImageCropper({ src, crop, onChange }) {
           />
           <span
             onPointerDown={(e) => startDrag('resize', e)}
-            className="absolute -bottom-1.5 -right-1.5 h-3.5 w-3.5 cursor-se-resize border-2 border-bg-primary bg-accent-blue"
+            className="touch-none absolute -bottom-2 -right-2 h-5 w-5 sm:h-3.5 sm:w-3.5 cursor-se-resize border-2 border-bg-primary bg-accent-blue"
           />
         </div>
       </div>
