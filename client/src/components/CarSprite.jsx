@@ -13,8 +13,9 @@ import { spriteColorFor } from '../utils/spriteColor'
  * Without the onError branch that renders as a broken image icon.
  */
 function CarSprite({ car, className, alt }) {
-  const [failed, setFailed] = useState(false)
-  const showImage = Boolean(car.pixelImageUrl) && !failed
+  const [failedUrl, setFailedUrl] = useState(null)
+  const isFailed = failedUrl === car.pixelImageUrl
+  const showImage = Boolean(car.pixelImageUrl) && !isFailed
 
   if (!showImage) {
     return (
@@ -29,7 +30,7 @@ function CarSprite({ car, className, alt }) {
     <img
       src={car.pixelImageUrl}
       alt={alt ?? ''}
-      onError={() => setFailed(true)}
+      onError={() => setFailedUrl(car.pixelImageUrl)}
       className={`pixelated object-contain object-bottom ${className ?? ''}`}
     />
   )

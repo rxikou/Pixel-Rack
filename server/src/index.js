@@ -36,7 +36,7 @@ app.use(express.json())
 const serverRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 app.use('/uploads', express.static(path.join(serverRoot, 'temp_uploads')))
 
-app.get('/api/health', (req, res) => {
+app.get(['/api/health', '/healthz', '/readyz'], (req, res) => {
   res.json({ success: true, data: { status: 'ok' } })
 })
 

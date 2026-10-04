@@ -15,9 +15,15 @@ export async function apiFetch(path, options = {}) {
     },
   })
 
-  const body = await response.json()
-  if (!response.ok) {
-    throw new Error(body.error || 'Request failed')
+  let body = null
+  try {
+    body = await response.json()
+  } catch {
+    // Non-JSON response, e.g. HTML 502/503 from a cold-starting backend
   }
-  return body.data
+
+  if (!response.ok) {
+    throw new Error(body?.error || `Request failed with status ${response.status}`)
+  }
+  return body?.data
 }
