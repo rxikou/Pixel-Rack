@@ -51,10 +51,14 @@ body {
 
 .pixel-text {
   text-shadow:
-    2px 2px 0 #05070d,
-    -1px 1px 0 #05070d,
+    -1px -1px 0 #05070d,
+    0 -1px 0 #05070d,
     1px -1px 0 #05070d,
-    -1px -1px 0 #05070d;
+    -1px 0 0 #05070d,
+    1px 0 0 #05070d,
+    -1px 1px 0 #05070d,
+    0 1px 0 #05070d,
+    1px 1px 0 #05070d;
 }
 
 /* Chunky button: raised, and physically depresses on click. */

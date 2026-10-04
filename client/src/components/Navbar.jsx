@@ -15,11 +15,10 @@ const NAV_LINKS = [
 ]
 
 const navItemClass = (active) =>
-  // Clean, crisp typography without heavy multi-pixel text-shadow to prevent double-printed ghosting
-  `flex flex-col items-center gap-1 border-b-[3px] pb-1 font-bold uppercase tracking-wider transition-colors ${
+  `pixel-text flex flex-col items-center gap-1 border-b-[3px] pb-1 font-bold uppercase tracking-wider transition-colors ${
     active
-      ? 'border-amber-400 text-amber-300 drop-shadow-[0_1px_1px_rgba(0,0,0,0.85)]'
-      : 'border-transparent text-white/90 hover:text-amber-200'
+      ? 'border-amber-400 text-amber-300'
+      : 'border-transparent text-white hover:text-amber-200'
   }`
 
 function Navbar() {
