@@ -37,7 +37,9 @@ export async function uploadCar(req, res) {
     )
     const spriteName = `${req.file.filename}-sprite.png`
     await fs.writeFile(path.join(path.dirname(req.file.path), spriteName), sprite)
-    pixelImageUrl = `/uploads/${spriteName}`
+    // Persist as a base64 data URI in Postgres so sprites survive Render
+    // container restarts and redeployments without disappearing.
+    pixelImageUrl = `data:image/png;base64,${sprite.toString('base64')}`
 
     // Gemini redraws the car; the local fallback only cuts the background out,
     // so say when the lower-quality route was used instead of failing silently.
