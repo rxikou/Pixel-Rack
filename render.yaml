@@ -1,4 +1,4 @@
-# Render blueprint for the PixelRack API.
+﻿# Render blueprint for the PixelRack API.
 # The client is deployed separately on Vercel from the client/ directory.
 services:
   - type: web
@@ -12,10 +12,14 @@ services:
     envVars:
       - key: NODE_VERSION
         value: 22.18.0
-      # Photo transformation stays off: the Gemini step bills per upload, so
-      # an open endpoint on the public internet spends real money.
       - key: PIXELATION_ENABLED
-        value: "false"
+        value: "true"
+      - key: PIXELATION_PROVIDER
+        value: "gemini"
+      - key: GEMINI_IMAGE_MODEL
+        value: "gemini-2.5-flash-image"
+      - key: GEMINI_API_KEY
+        sync: false
       # Set these in the Render dashboard rather than here, so secrets stay
       # out of the repo. Values come from the repo-root .env.local that the
       # Neon CLI manages.
