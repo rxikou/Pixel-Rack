@@ -36,19 +36,68 @@ const PROMPT = [
   'Strict visual requirements:',
   '- Orientation: Exact horizontal side-view profile (facing right). The car must be completely horizontal, centered, and fill the frame.',
   '- Scale & Framing: Render the car as large as possible, occupying 90% to 95% of the frame width so body panels and wheels are prominently visible.',
-  '- Background: Place the car on a solid, pure plain white background (#FFFFFF) with absolutely zero shadows, zero reflections, and no ground plane or horizon lines under the wheels.',
+  '- Background & Isolation: Place the car floating isolated on a solid, pure plain white background (#FFFFFF). Absolutely zero drop shadows, zero ground contact lines, zero horizon lines, and zero surface reflections under or around the wheels.',
+  '- Clean Edges: The bottom of the rubber tires must meet the white background directly with no grey pixels, no dark floor smudges, and no stray artifacts underneath.',
   '- Art style: Flat solid color blocks, chunky dark outlines around the car body and wheels, no color gradients, no photographic textures, no blur, and no anti-aliasing.',
   '- Details: Simplify details to body panels, windows, headlights, and wheels. Eliminate fine text, license plates, and sponsor decals.',
   '- Color fidelity: Preserve the actual primary paint color and wheel rim color from the real die-cast car so the model is immediately recognizable.',
-  '- Isolation: Ignore any packaging, plastic blister cards, cardboard graphics, fingers, tables, or photo backdrops. Draw only the isolated car.',
-  'Output only the single isolated car image on a pure solid white background.',
+  '- Isolation: Ignore any packaging, plastic blister cards, cardboard graphics, fingers, tables, or photo backdrops. Draw only the isolated vehicle.',
+  'Output only the single isolated car image on a pure solid white background with zero stray pixels.',
 ].join('\n')
+
+/**
+ * Removes isolated islands of opaque pixels smaller than `minComponentSize`.
+ * This purges stray specks, detached shadow fragments, and ground plane artifacts.
+ */
+export function removeStrayIslands(data, width, height, minComponentSize = 35) {
+  const visited = new Uint8Array(width * height)
+  const channels = 4
+
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      const idx = y * width + x
+      if (data[idx * channels + 3] === 0 || visited[idx]) continue
+
+      const component = [idx]
+      visited[idx] = 1
+      let head = 0
+
+      while (head < component.length) {
+        const curr = component[head++]
+        const cx = curr % width
+        const cy = (curr / width) | 0
+
+        for (let dy = -1; dy <= 1; dy++) {
+          for (let dx = -1; dx <= 1; dx++) {
+            if (dx === 0 && dy === 0) continue
+            const nx = cx + dx
+            const ny = cy + dy
+            if (nx >= 0 && nx < width && ny >= 0 && ny < height) {
+              const nIdx = ny * width + nx
+              if (data[nIdx * channels + 3] > 0 && !visited[nIdx]) {
+                visited[nIdx] = 1
+                component.push(nIdx)
+              }
+            }
+          }
+        }
+      }
+
+      if (component.length < minComponentSize) {
+        for (let i = 0; i < component.length; i++) {
+          data[component[i] * channels + 3] = 0
+        }
+      }
+    }
+  }
+}
 
 /**
  * Strips a solid background locally using border flood-fill.
  * Runs deterministically in Node on CPU to avoid spending extra AI credits.
+ * Also removes light neutral-grey floor shadows and stray disconnected islands.
  */
-export async function stripBackgroundFloodFill(imageBuffer, tolerance = 48) {
+export async function stripBackgroundFloodFill(imageBuffer, tolerance = 52) {
   const { data, info } = await sharp(imageBuffer)
     .ensureAlpha()
     .raw()
@@ -57,11 +106,32 @@ export async function stripBackgroundFloodFill(imageBuffer, tolerance = 48) {
   const { width, height, channels } = info
   // Sample top-left corner as reference background color
   const bg = [data[0], data[1], data[2]]
+  const isBgWhite = bg[0] >= 240 && bg[1] >= 240 && bg[2] >= 240
 
-  const isBackground = (i) =>
-    Math.abs(data[i] - bg[0]) <= tolerance &&
-    Math.abs(data[i + 1] - bg[1]) <= tolerance &&
-    Math.abs(data[i + 2] - bg[2]) <= tolerance
+  const isBackground = (i) => {
+    const r = data[i]
+    const g = data[i + 1]
+    const b = data[i + 2]
+
+    // Direct color match against reference background
+    if (
+      Math.abs(r - bg[0]) <= tolerance &&
+      Math.abs(g - bg[1]) <= tolerance &&
+      Math.abs(b - bg[2]) <= tolerance
+    ) {
+      return true
+    }
+
+    // Light neutral grey shadows/reflections on pure white backgrounds
+    if (isBgWhite) {
+      const maxDiff = Math.max(Math.abs(r - g), Math.abs(g - b), Math.abs(r - b))
+      if (maxDiff <= 14 && r >= 150 && g >= 150 && b >= 150) {
+        return true
+      }
+    }
+
+    return false
+  }
 
   const seen = new Uint8Array(width * height)
   const stack = []
@@ -84,6 +154,9 @@ export async function stripBackgroundFloodFill(imageBuffer, tolerance = 48) {
     data[p * channels + 3] = 0 // Punch transparent
     stack.push([x + 1, y], [x - 1, y], [x, y + 1], [x, y - 1])
   }
+
+  // Pass 2: Clean up any isolated stray pixel islands
+  removeStrayIslands(data, width, height, 35)
 
   return sharp(data, { raw: { width, height, channels } })
     .png()
@@ -145,7 +218,13 @@ export async function removeCarBackground(imageBuffer) {
     await execFileAsync(process.execPath, [WORKER, inputPath, outputPath], {
       timeout: REMOVAL_TIMEOUT_MS,
     })
-    return await fs.readFile(outputPath)
+    const rawCutout = await fs.readFile(outputPath)
+    const { data, info } = await sharp(rawCutout)
+      .ensureAlpha()
+      .raw()
+      .toBuffer({ resolveWithObject: true })
+    removeStrayIslands(data, info.width, info.height, 25)
+    return await sharp(data, { raw: info }).png().toBuffer()
   } finally {
     await fs.rm(dir, { recursive: true, force: true })
   }
@@ -160,11 +239,22 @@ export async function removeCarBackground(imageBuffer) {
  * nearest samples single pixels and keeps camera noise.
  */
 export async function quantizeToSprite(imageBuffer, { kernel = 'nearest' } = {}) {
-  // Crop away the transparent margin first, otherwise the car keeps the
-  // original framing and a distant shot renders as a few pixels.
+  // First, strip any stray disconnected islands from the source cutout/drawing
   let source = imageBuffer
   try {
-    source = await sharp(imageBuffer).trim({ threshold: 1 }).toBuffer()
+    const { data, info } = await sharp(imageBuffer)
+      .ensureAlpha()
+      .raw()
+      .toBuffer({ resolveWithObject: true })
+    removeStrayIslands(data, info.width, info.height, 35)
+    source = await sharp(data, { raw: info }).png().toBuffer()
+  } catch {
+    // Keep source
+  }
+
+  // Crop away the transparent margin, now guaranteed free of stray floor specks
+  try {
+    source = await sharp(source).trim({ threshold: 1 }).toBuffer()
   } catch {
     // trim throws when there is nothing to crop; the original is then correct.
   }
@@ -178,12 +268,24 @@ export async function quantizeToSprite(imageBuffer, { kernel = 'nearest' } = {})
     .png({ palette: true, colours: SPRITE_COLOURS, dither: 0 })
     .toBuffer()
 
+  let cleanedSprite = sprite
+  try {
+    const { data, info } = await sharp(sprite)
+      .ensureAlpha()
+      .raw()
+      .toBuffer({ resolveWithObject: true })
+    removeStrayIslands(data, info.width, info.height, 4)
+    cleanedSprite = await sharp(data, { raw: info }).png().toBuffer()
+  } catch {
+    // Keep sprite
+  }
+
   // Trim any excess transparent letterboxing so the car sprite fills its element
   // tightly without wasting vertical or horizontal space.
   try {
-    return await sharp(sprite).trim({ threshold: 1 }).toBuffer()
+    return await sharp(cleanedSprite).trim({ threshold: 1 }).toBuffer()
   } catch {
-    return sprite
+    return cleanedSprite
   }
 }
 
