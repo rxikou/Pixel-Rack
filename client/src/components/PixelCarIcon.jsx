@@ -12,6 +12,7 @@ function PixelCarIcon({ color, className }) {
   return (
     <svg
       viewBox="0 0 10 5"
+      preserveAspectRatio="xMidYMax meet"
       className={`pixelated ${className ?? ''}`}
       shapeRendering="crispEdges"
     >

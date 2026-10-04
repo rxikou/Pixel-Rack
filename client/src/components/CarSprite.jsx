@@ -30,7 +30,7 @@ function CarSprite({ car, className, alt }) {
       src={car.pixelImageUrl}
       alt={alt ?? ''}
       onError={() => setFailed(true)}
-      className={`pixelated object-contain ${className ?? ''}`}
+      className={`pixelated object-contain object-bottom ${className ?? ''}`}
     />
   )
 }

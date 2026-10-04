@@ -87,7 +87,7 @@ function Rack({ cars, environmentId, onDelete }) {
 
               {/* recessed cavity the cars stand inside */}
               <div
-                className={`flex items-end justify-start px-3 pt-6 pb-0.5 sm:px-6 sm:pt-8 shadow-[inset_0_14px_18px_-8px_rgba(0,0,0,0.95),inset_6px_0_10px_-8px_rgba(0,0,0,0.8),inset_-6px_0_10px_-8px_rgba(0,0,0,0.8)] ${styles.cavity}`}
+                className={`flex items-end justify-start px-3 pt-6 pb-0 sm:px-6 sm:pt-8 shadow-[inset_0_14px_18px_-8px_rgba(0,0,0,0.95),inset_6px_0_10px_-8px_rgba(0,0,0,0.8),inset_-6px_0_10px_-8px_rgba(0,0,0,0.8)] ${styles.cavity}`}
               >
                 {row.map((car) => (
                   <div
