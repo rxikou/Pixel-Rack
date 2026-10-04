@@ -1,4 +1,4 @@
-import './lib/loadEnv.js'
+﻿import './lib/loadEnv.js'
 
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -44,9 +44,10 @@ app.get('/api/health', (req, res) => {
 // this rather than keeping its own copy of the flag, so the two cannot drift
 // and promise something the API will refuse.
 app.get('/api/config', (req, res) => {
+  const pixelationEnabled = process.env.PIXELATION_ENABLED === 'true'
   res.json({
     success: true,
-    data: { pixelationEnabled: process.env.PIXELATION_ENABLED === 'true' },
+    data: { pixelationEnabled },
   })
 })
 
@@ -62,3 +63,4 @@ app.listen(port, () => {
 })
 
 export default app
+
