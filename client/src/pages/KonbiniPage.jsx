@@ -1,13 +1,12 @@
 import ScenePage from '../components/ScenePage'
 import konbiniBackground from '../assets/konbini-background.webp'
 
-// Centred on the three bays the v2 artwork actually paints. The lines were
-// measured off the image rather than eyeballed: they sit at 17.9/39.5/60.5/81.7
-// percent, so the bay centres land near 30, 50 and 70 percent.
+// Centred on the three parking bays in the artwork, scaled up so the cars
+// look natural and prominent in front of the convenience store and Mt. Fuji.
 const SLOTS = [
-  { left: '20.5%', top: '74%', width: '19%', height: '20%' },
-  { left: '40.5%', top: '74%', width: '19%', height: '20%' },
-  { left: '60.5%', top: '74%', width: '19%', height: '20%' },
+  { left: '15%', top: '69%', width: '23%', height: '26%' },
+  { left: '39%', top: '69%', width: '23%', height: '26%' },
+  { left: '63%', top: '69%', width: '23%', height: '26%' },
 ]
 
 function KonbiniPage() {

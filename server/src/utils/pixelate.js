@@ -169,7 +169,7 @@ export async function quantizeToSprite(imageBuffer, { kernel = 'nearest' } = {})
     // trim throws when there is nothing to crop; the original is then correct.
   }
 
-  return sharp(source)
+  const sprite = await sharp(source)
     .resize(SPRITE_WIDTH, SPRITE_HEIGHT, {
       fit: 'contain',
       kernel,
@@ -177,6 +177,14 @@ export async function quantizeToSprite(imageBuffer, { kernel = 'nearest' } = {})
     })
     .png({ palette: true, colours: SPRITE_COLOURS, dither: 0 })
     .toBuffer()
+
+  // Trim any excess transparent letterboxing so the car sprite fills its element
+  // tightly without wasting vertical or horizontal space.
+  try {
+    return await sharp(sprite).trim({ threshold: 1 }).toBuffer()
+  } catch {
+    return sprite
+  }
 }
 
 /**
