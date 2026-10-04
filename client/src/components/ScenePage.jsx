@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import Navbar from './Navbar'
 import Footer from './Footer'
@@ -95,13 +96,71 @@ function ScenePage({ environmentId, title, blurb, background, slotPositions, eff
       <Navbar />
 
       <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-4 px-6 py-8">
+        {/* Environment Quick Switch Navigation */}
+        <nav
+          aria-label="Scene navigation"
+          className="flex flex-wrap items-center justify-between gap-3 border-2 border-accent-blue/30 bg-bg-container/60 p-2.5"
+        >
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="font-mono text-xs uppercase tracking-wide text-text-secondary">
+              Environment:
+            </span>
+            <div className="flex flex-wrap gap-1.5 font-mono text-xs font-bold uppercase">
+              <Link
+                to="/dashboard"
+                className="pixel-btn bg-slate-800 px-3 py-1 text-white/80 hover:text-white"
+              >
+                Wooden Shelf
+              </Link>
+              <Link
+                to="/garage"
+                className={`pixel-btn px-3 py-1 ${
+                  environmentId === 'garage'
+                    ? 'border-amber-400 bg-amber-500 font-bold text-slate-950'
+                    : 'bg-slate-800 text-white/80 hover:text-white'
+                }`}
+              >
+                Virtual Garage
+              </Link>
+              <Link
+                to="/konbini"
+                className={`pixel-btn px-3 py-1 ${
+                  environmentId === 'konbini'
+                    ? 'border-amber-400 bg-amber-500 font-bold text-slate-950'
+                    : 'bg-slate-800 text-white/80 hover:text-white'
+                }`}
+              >
+                7-11 Konbini
+              </Link>
+            </div>
+          </div>
+
+          <Link
+            to="/dashboard"
+            className="flex items-center gap-1 font-mono text-xs text-accent-blue hover:text-amber-300 hover:underline"
+          >
+            <span>&larr;</span> Back to My Rack
+          </Link>
+        </nav>
+
         {error && (
           <p className="pixel-panel bg-red-900/60 px-3 py-2 font-mono text-xs text-white">
             {error}
           </p>
         )}
 
-        <Panel title={title} bodyClassName="p-3">
+        <Panel
+          title={title}
+          action={
+            <Link
+              to="/dashboard"
+              className="border border-[#05070d] bg-sky-900/80 px-2.5 py-1 font-mono text-[11px] uppercase tracking-wide text-white hover:bg-sky-600"
+            >
+              My Rack &rarr;
+            </Link>
+          }
+          bodyClassName="p-3"
+        >
           <p className="mb-3 font-mono text-xs text-text-secondary">{blurb}</p>
 
           <div className="pixel-inset relative aspect-[16/9] w-full overflow-hidden bg-slate-900">

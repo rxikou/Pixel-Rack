@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import { useLocation } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import Rack from '../components/Rack'
@@ -12,12 +13,27 @@ import {
 } from '../api/cars'
 
 function DashboardPage() {
+  const { hash } = useLocation()
   const [cars, setCars] = useState([])
   const [environments, setEnvironments] = useState([])
   const [sort, setSort] = useState('shelf')
   const [seriesFilter, setSeriesFilter] = useState('all')
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState('')
+
+  useEffect(() => {
+    if (hash === '#upload-panel') {
+      const timer = setTimeout(() => {
+        const el = document.getElementById('upload-panel')
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+          const input = el.querySelector('input[type="file"]')
+          if (input) input.focus()
+        }
+      }, 100)
+      return () => clearTimeout(timer)
+    }
+  }, [hash])
 
   useEffect(() => {
     let cancelled = false

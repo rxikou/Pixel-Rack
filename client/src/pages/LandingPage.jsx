@@ -253,34 +253,38 @@ function LandingPage() {
 
         <Panel title="Where Your Cars Live">
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-            {SCENES.map(({ id, name, capacity, blurb }) => (
-              <div
-                key={id}
-                className="pixel-panel group flex flex-col overflow-hidden bg-bg-primary/40"
-              >
-                <div className="relative">
-                  <EnvironmentThumb
-                    environmentId={id}
-                    className="h-32 transition duration-200 group-hover:brightness-110"
-                  />
+            {SCENES.map(({ id, name, capacity, blurb }) => {
+              const to = id === 'rack' ? '/dashboard' : `/${id}`
+              return (
+                <Link
+                  key={id}
+                  to={to}
+                  className="pixel-panel group flex flex-col overflow-hidden bg-bg-primary/40 hover:brightness-110"
+                >
+                  <div className="relative">
+                    <EnvironmentThumb
+                      environmentId={id}
+                      className="h-32 transition duration-200 group-hover:brightness-110"
+                    />
 
-                  {/* scrim so the name stays legible over any artwork */}
-                  <div className="pointer-events-none absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-[#05070d] via-[#05070d]/70 to-transparent" />
+                    {/* scrim so the name stays legible over any artwork */}
+                    <div className="pointer-events-none absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-[#05070d] via-[#05070d]/70 to-transparent" />
 
-                  <span className="pixel-text absolute bottom-2 left-2 right-2 font-pixel text-lg uppercase leading-none tracking-wide text-white">
-                    {name}
-                  </span>
+                    <span className="pixel-text absolute bottom-2 left-2 right-2 font-pixel text-lg uppercase leading-none tracking-wide text-white">
+                      {name}
+                    </span>
 
-                  <span className="absolute right-2 top-2 border-2 border-[#05070d] bg-sky-600 px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-wide text-white">
-                    {capacity}
-                  </span>
-                </div>
+                    <span className="absolute right-2 top-2 border-2 border-[#05070d] bg-sky-600 px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-wide text-white">
+                      {capacity}
+                    </span>
+                  </div>
 
-                <p className="flex-1 px-3 py-2 font-mono text-[11px] leading-relaxed text-text-secondary">
-                  {blurb}
-                </p>
-              </div>
-            ))}
+                  <p className="flex-1 px-3 py-2 font-mono text-[11px] leading-relaxed text-text-secondary">
+                    {blurb}
+                  </p>
+                </Link>
+              )
+            })}
           </div>
         </Panel>
       </main>
