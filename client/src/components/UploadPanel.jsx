@@ -70,6 +70,19 @@ function UploadPanel({ onUpload }) {
     setNotice('')
     setProgress(0)
     setIsProcessing(true)
+
+    // Gemini sprite generation typically takes ~14-16 seconds end-to-end.
+    // Progress smoothly advances from 0% toward 96% over ~15 seconds,
+    // and hits 100% right when the server returns the generated sprite.
+    const startTime = Date.now()
+    const TARGET_DURATION_MS = 15000
+    const progressTimer = setInterval(() => {
+      const elapsed = Date.now() - startTime
+      const ratio = Math.min(elapsed / TARGET_DURATION_MS, 1)
+      const current = Math.min(96, Math.round(100 * (1 - Math.pow(1 - ratio, 1.4))))
+      setProgress(current)
+    }, 100)
+
     try {
       // Upload only the cropped region: background removal treats a packaged
       // car as one object, so sending the whole photo yields a sprite of the
@@ -79,8 +92,13 @@ function UploadPanel({ onUpload }) {
         file: toUpload,
         name,
         series,
-        onProgress: setProgress,
       })
+      clearInterval(progressTimer)
+      setProgress(100)
+
+      // Hold at 100% briefly so the user sees the completed state
+      await new Promise((resolve) => setTimeout(resolve, 350))
+
       onUpload(car)
       // The car still saved; say so rather than silently showing a placeholder.
       if (car.pixelationError) {
@@ -92,6 +110,7 @@ function UploadPanel({ onUpload }) {
       setSeries('')
       setCrop(INITIAL_CROP)
     } catch (err) {
+      clearInterval(progressTimer)
       setError(err.message)
     } finally {
       setIsProcessing(false)
@@ -120,7 +139,13 @@ function UploadPanel({ onUpload }) {
         {isProcessing ? (
           <div className="flex flex-col gap-3 border-2 border-accent-blue/50 bg-bg-primary p-3">
             <p className="truncate font-mono text-xs text-text-secondary">
-              Uploading "{name}"
+              {progress < 20
+                ? `Uploading "${name}"...`
+                : progress < 90
+                  ? `Redrawing 16-bit sprite with Gemini...`
+                  : progress < 100
+                    ? `Finalizing pixel artwork...`
+                    : `Transformation complete!`}
             </p>
 
             <div className="flex items-center justify-center gap-3">
@@ -128,7 +153,7 @@ function UploadPanel({ onUpload }) {
                 <img
                   src={previewUrl}
                   alt="Original upload"
-                  className="h-20 w-20 border-2 border-text-secondary/40 object-cover"
+                  className="h-24 w-28 border-2 border-text-secondary/40 object-cover"
                 />
                 <span className="font-mono text-[10px] uppercase tracking-wide text-text-secondary">
                   Original
@@ -140,10 +165,10 @@ function UploadPanel({ onUpload }) {
               </span>
 
               <div className="flex flex-col items-center gap-1">
-                <div className="flex h-20 w-20 items-center justify-center border-2 border-accent-blue bg-bg-container">
+                <div className="flex h-24 w-28 items-center justify-center border-2 border-accent-blue bg-bg-container">
                   <PixelCarIcon
                     color={spriteColorFor(name || 'pending')}
-                    className="h-10 w-16 opacity-60"
+                    className="h-14 w-20 opacity-60"
                   />
                 </div>
                 <span className="font-mono text-[10px] uppercase tracking-wide text-accent-blue">
@@ -154,7 +179,7 @@ function UploadPanel({ onUpload }) {
 
             <div className="relative h-5 w-full border-2 border-bg-container bg-bg-container">
               <div
-                className="h-full bg-accent-blue transition-all"
+                className="h-full bg-accent-blue transition-all duration-150"
                 style={{ width: `${progress}%` }}
               />
               <span className="absolute inset-0 flex items-center justify-center font-mono text-[11px] font-bold text-text-primary">

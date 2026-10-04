@@ -3,7 +3,7 @@ import CarSprite from './CarSprite'
 
 function ShelfCarSlot({ car, onDelete }) {
   return (
-    <div className="group relative flex h-14 w-full items-end justify-center sm:h-16">
+    <div className="group relative flex h-16 w-full items-end justify-center sm:h-20">
       <button
         type="button"
         onClick={() => onDelete(car.id)}
@@ -21,12 +21,12 @@ function ShelfCarSlot({ car, onDelete }) {
       </div>
 
       {/* contact shadow, so the car reads as sitting on the plank */}
-      <div className="pointer-events-none absolute bottom-0 left-1/2 h-1.5 w-[78%] -translate-x-1/2 rounded-[50%] bg-black/55 blur-[2px]" />
+      <div className="pointer-events-none absolute bottom-0 left-1/2 h-2 w-[82%] -translate-x-1/2 rounded-[50%] bg-black/55 blur-[2px]" />
 
       <CarSprite
         car={car}
         alt={car.name}
-        className="relative z-10 h-10 w-full drop-shadow-[0_2px_2px_rgba(0,0,0,0.6)] sm:h-12"
+        className="relative z-10 h-12 w-full drop-shadow-[0_2px_2px_rgba(0,0,0,0.6)] sm:h-16"
       />
     </div>
   )

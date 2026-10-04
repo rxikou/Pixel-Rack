@@ -3,7 +3,7 @@ import Button from './Button'
 import CarSprite from './CarSprite'
 
 function CarThumb({ car }) {
-  return <CarSprite car={car} className="h-12 w-full" />
+  return <CarSprite car={car} className="h-16 w-full sm:h-20" />
 }
 
 CarThumb.propTypes = { car: PropTypes.object.isRequired }

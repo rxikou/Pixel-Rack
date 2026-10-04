@@ -13,10 +13,10 @@ const execFileAsync = promisify(execFile)
 const here = path.dirname(fileURLToPath(import.meta.url))
 const WORKER = path.join(here, 'removeBackgroundWorker.js')
 
-// Sprite canvas. The client upscales with `image-rendering: pixelated`, so we
-// store a genuinely low-resolution sprite rather than a blurry large one.
-export const SPRITE_WIDTH = 96
-export const SPRITE_HEIGHT = 72
+// Sprite canvas. Generates a crisp, detailed 16-bit retro sprite
+// that scales cleanly on the rack shelves and environment scenes.
+export const SPRITE_WIDTH = 256
+export const SPRITE_HEIGHT = 192
 
 // Colour cap. Measured, not guessed: sharp only actually quantizes at low
 // values here. At `colours: 32` a test sprite still came out with 49 distinct
@@ -34,7 +34,8 @@ const PROMPT = [
   'Redraw this photo of a die-cast toy car as a crisp 16-bit pixel art side-profile video game sprite.',
   'Do not downsample or filter the photo. Completely redraw the vehicle as clean, authentic retro pixel artwork.',
   'Strict visual requirements:',
-  '- Orientation: Exact horizontal side-view profile (facing right). The car must be completely horizontal and fill the width of the frame.',
+  '- Orientation: Exact horizontal side-view profile (facing right). The car must be completely horizontal, large, centered, and fill the frame from edge to edge.',
+  '- Scale: Render the car large and prominent in the frame so body panels and wheels are clearly visible.',
   '- Background: Place the car on a solid, pure plain white background (#FFFFFF) with absolutely zero shadows, zero reflections, and no ground plane or horizon lines under the wheels.',
   '- Art style: Flat solid color blocks, chunky dark outlines around the car body and wheels, no color gradients, no photographic textures, no blur, and no anti-aliasing.',
   '- Details: Simplify details to body panels, windows, headlights, and wheels. Eliminate fine text, license plates, and sponsor decals.',
