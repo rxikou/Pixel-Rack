@@ -1,4 +1,4 @@
-import { execFile } from 'node:child_process'
+﻿import { execFile } from 'node:child_process'
 import crypto from 'node:crypto'
 import fs from 'node:fs/promises'
 import os from 'node:os'
@@ -31,18 +31,63 @@ const REMOVAL_TIMEOUT_MS = Number(process.env.BG_REMOVAL_TIMEOUT_MS || 60_000)
 const GEMINI_MODEL = process.env.GEMINI_IMAGE_MODEL || 'gemini-2.5-flash-image'
 
 const PROMPT = [
-  'Redraw this photo of a die-cast toy car as a hand-drawn 16-bit pixel art game sprite.',
-  'Do not simply pixelate or downscale the photo. Redraw it as clean sprite artwork.',
-  'Requirements:',
-  '- Side-on profile view, facing right, car centred and filling the frame.',
-  '- Flat blocks of solid colour. No gradients, no photographic shading, no blur, no anti-aliasing.',
-  '- A clear darker outline around the car body and around each wheel.',
-  '- Simplify detail so it stays readable at small size: body, windows, wheels only. No text, no logos.',
-  '- Keep the real body colour of the toy car so it is still recognisable.',
-  '- Ignore any packaging, blister plastic, cardboard backing, printed artwork, hands or background. Draw only the physical toy car itself.',
-  '- Place the sprite on a fully transparent background.',
-  'Output only the image.',
+  'Redraw this photo of a die-cast toy car as a crisp 16-bit pixel art side-profile video game sprite.',
+  'Do not downsample or filter the photo. Completely redraw the vehicle as clean, authentic retro pixel artwork.',
+  'Strict visual requirements:',
+  '- Orientation: Exact horizontal side-view profile (facing right). The car must be completely horizontal and fill the width of the frame.',
+  '- Background: Place the car on a solid, pure plain white background (#FFFFFF) with absolutely zero shadows, zero reflections, and no ground plane or horizon lines under the wheels.',
+  '- Art style: Flat solid color blocks, chunky dark outlines around the car body and wheels, no color gradients, no photographic textures, no blur, and no anti-aliasing.',
+  '- Details: Simplify details to body panels, windows, headlights, and wheels. Eliminate fine text, license plates, and sponsor decals.',
+  '- Color fidelity: Preserve the actual primary paint color and wheel rim color from the real die-cast car so the model is immediately recognizable.',
+  '- Isolation: Ignore any packaging, plastic blister cards, cardboard graphics, fingers, tables, or photo backdrops. Draw only the isolated car.',
+  'Output only the single isolated car image on a pure solid white background.',
 ].join('\n')
+
+/**
+ * Strips a solid background locally using border flood-fill.
+ * Runs deterministically in Node on CPU to avoid spending extra AI credits.
+ */
+export async function stripBackgroundFloodFill(imageBuffer, tolerance = 48) {
+  const { data, info } = await sharp(imageBuffer)
+    .ensureAlpha()
+    .raw()
+    .toBuffer({ resolveWithObject: true })
+
+  const { width, height, channels } = info
+  // Sample top-left corner as reference background color
+  const bg = [data[0], data[1], data[2]]
+
+  const isBackground = (i) =>
+    Math.abs(data[i] - bg[0]) <= tolerance &&
+    Math.abs(data[i + 1] - bg[1]) <= tolerance &&
+    Math.abs(data[i + 2] - bg[2]) <= tolerance
+
+  const seen = new Uint8Array(width * height)
+  const stack = []
+
+  // Seed flood fill from all perimeter pixels
+  for (let x = 0; x < width; x++) {
+    stack.push([x, 0], [x, height - 1])
+  }
+  for (let y = 0; y < height; y++) {
+    stack.push([0, y], [width - 1, y])
+  }
+
+  while (stack.length) {
+    const [x, y] = stack.pop()
+    if (x < 0 || y < 0 || x >= width || y >= height) continue
+    const p = y * width + x
+    if (seen[p]) continue
+    if (!isBackground(p * channels)) continue
+    seen[p] = 1
+    data[p * channels + 3] = 0 // Punch transparent
+    stack.push([x + 1, y], [x - 1, y], [x, y + 1], [x, y - 1])
+  }
+
+  return sharp(data, { raw: { width, height, channels } })
+    .png()
+    .toBuffer()
+}
 
 /**
  * Preferred stage 1: have Gemini genuinely redraw the photo as sprite art.
@@ -147,7 +192,12 @@ export async function pixelateImage(imageBuffer, mimeType = 'image/png') {
       throw new Error('PIXELATION_PROVIDER is set to local')
     }
     const drawn = await generatePixelArt(imageBuffer, mimeType)
-    return { sprite: await quantizeToSprite(drawn, { kernel: 'nearest' }), source: 'gemini' }
+    // Strip the solid background locally using flood fill without spending AI credits
+    const transparentDrawn = await stripBackgroundFloodFill(drawn)
+    return {
+      sprite: await quantizeToSprite(transparentDrawn, { kernel: 'nearest' }),
+      source: 'gemini',
+    }
   } catch (err) {
     // The SDK retries some failures (e.g. 429) and the retry can fail with an
     // opaque "TypeError: unusable" once the request body has been consumed,

@@ -5,7 +5,11 @@ import Panel from './Panel'
 import PixelCarIcon from './PixelCarIcon'
 import ImageCropper, { cropFileToPng, INITIAL_CROP } from './ImageCropper'
 import { uploadCar } from '../api/cars'
+import { fetchConfig } from '../api/config'
 import { spriteColorFor } from '../utils/spriteColor'
+
+const COMING_SOON =
+  'Photo transformation is still in the works. This demo has it switched off for now, so nothing was uploaded.'
 
 function UploadPanel({ onUpload }) {
   const [file, setFile] = useState(null)
@@ -15,13 +19,31 @@ function UploadPanel({ onUpload }) {
   const [progress, setProgress] = useState(0)
   const [isProcessing, setIsProcessing] = useState(false)
   const [error, setError] = useState('')
+  const [notice, setNotice] = useState('')
   const [crop, setCrop] = useState(INITIAL_CROP)
+  // Assume off until the API says otherwise, so a slow or failed config
+  // request cannot briefly present the feature as working.
+  const [pixelationEnabled, setPixelationEnabled] = useState(false)
 
   useEffect(() => {
     return () => {
       if (previewUrl) URL.revokeObjectURL(previewUrl)
     }
   }, [previewUrl])
+
+  useEffect(() => {
+    let cancelled = false
+    fetchConfig()
+      .then((config) => {
+        if (!cancelled) setPixelationEnabled(Boolean(config?.pixelationEnabled))
+      })
+      .catch(() => {
+        // Leave it disabled: the server would refuse the upload anyway.
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [])
 
   function handleFileChange(e) {
     const selected = e.target.files?.[0]
@@ -33,9 +55,19 @@ function UploadPanel({ onUpload }) {
 
   async function handleSubmit(e) {
     e.preventDefault()
+
+    // Say so on the click rather than letting them fill the form, wait through
+    // an upload and then hit a 503 from the server.
+    if (!pixelationEnabled) {
+      setError('')
+      setNotice(COMING_SOON)
+      return
+    }
+
     if (!name || !file) return
 
     setError('')
+    setNotice('')
     setProgress(0)
     setIsProcessing(true)
     try {
@@ -71,6 +103,13 @@ function UploadPanel({ onUpload }) {
     <Panel
       id="upload-panel"
       title="Hot Wheels Pixelator"
+      action={
+        pixelationEnabled ? null : (
+          <span className="border-2 border-[#05070d] bg-amber-400 px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-wide text-[#0b1020]">
+            In Development
+          </span>
+        )
+      }
       bodyClassName="flex flex-col gap-4 p-3"
     >
       <div className="flex flex-col gap-2">
@@ -124,10 +163,22 @@ function UploadPanel({ onUpload }) {
             </div>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className="flex flex-col gap-2">
+          <form
+            onSubmit={handleSubmit}
+            // noValidate while disabled, otherwise the browser's own "fill this
+            // in" popup fires first and the click never reaches handleSubmit to
+            // explain that the feature is off.
+            noValidate={!pixelationEnabled}
+            className="flex flex-col gap-2"
+          >
             {error && (
               <p className="border-2 border-accent-pink/60 px-2 py-1.5 font-mono text-xs text-accent-pink">
                 {error}
+              </p>
+            )}
+            {notice && (
+              <p className="border-2 border-amber-400/70 bg-amber-400/10 px-2 py-1.5 font-mono text-xs text-amber-200">
+                {notice}
               </p>
             )}
             <label className="cursor-pointer border-2 border-dashed border-text-secondary p-4 text-center font-mono text-xs text-text-secondary hover:border-accent-blue">

@@ -33,3 +33,7 @@ server/temp_uploads/*
 !server/temp_uploads/.gitkeep
 *.log
 .neon
+
+# AI agent instructions
+GEMINI.md
+

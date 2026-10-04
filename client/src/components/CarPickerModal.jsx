@@ -1,21 +1,9 @@
 import PropTypes from 'prop-types'
-import PixelCarIcon from './PixelCarIcon'
 import Button from './Button'
-import { spriteColorFor } from '../utils/spriteColor'
+import CarSprite from './CarSprite'
 
 function CarThumb({ car }) {
-  return car.pixelImageUrl ? (
-    <img
-      src={car.pixelImageUrl}
-      alt=""
-      className="pixelated h-12 w-full object-contain"
-    />
-  ) : (
-    <PixelCarIcon
-      color={car.color ?? spriteColorFor(car.id)}
-      className="h-12 w-full"
-    />
-  )
+  return <CarSprite car={car} className="h-12 w-full" />
 }
 
 CarThumb.propTypes = { car: PropTypes.object.isRequired }

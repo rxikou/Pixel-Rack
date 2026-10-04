@@ -3,21 +3,15 @@ import PropTypes from 'prop-types'
 import Navbar from './Navbar'
 import Footer from './Footer'
 import Panel from './Panel'
-import PixelCarIcon from './PixelCarIcon'
+import CarSprite from './CarSprite'
 import CarPickerModal from './CarPickerModal'
 import { fetchCars, fetchPlacements, setPlacement } from '../api/cars'
-import { spriteColorFor } from '../utils/spriteColor'
 
 function SlotCar({ car }) {
-  return car.pixelImageUrl ? (
-    <img
-      src={car.pixelImageUrl}
+  return (
+    <CarSprite
+      car={car}
       alt={car.name}
-      className="pixelated h-full w-full object-contain drop-shadow-[0_3px_3px_rgba(0,0,0,0.7)]"
-    />
-  ) : (
-    <PixelCarIcon
-      color={car.color ?? spriteColorFor(car.id)}
       className="h-full w-full drop-shadow-[0_3px_3px_rgba(0,0,0,0.7)]"
     />
   )

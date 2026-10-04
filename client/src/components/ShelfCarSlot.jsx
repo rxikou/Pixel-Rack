@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types'
-import PixelCarIcon from './PixelCarIcon'
-import { spriteColorFor } from '../utils/spriteColor'
+import CarSprite from './CarSprite'
 
 function ShelfCarSlot({ car, onDelete }) {
   return (
@@ -24,18 +23,11 @@ function ShelfCarSlot({ car, onDelete }) {
       {/* contact shadow, so the car reads as sitting on the plank */}
       <div className="pointer-events-none absolute bottom-0 left-1/2 h-1.5 w-[78%] -translate-x-1/2 rounded-[50%] bg-black/55 blur-[2px]" />
 
-      {car.pixelImageUrl ? (
-        <img
-          src={car.pixelImageUrl}
-          alt={car.name}
-          className="pixelated relative z-10 h-10 w-full object-contain drop-shadow-[0_2px_2px_rgba(0,0,0,0.6)] sm:h-12"
-        />
-      ) : (
-        <PixelCarIcon
-          color={car.color ?? spriteColorFor(car.id)}
-          className="relative z-10 h-10 w-full drop-shadow-[0_2px_2px_rgba(0,0,0,0.6)] sm:h-12"
-        />
-      )}
+      <CarSprite
+        car={car}
+        alt={car.name}
+        className="relative z-10 h-10 w-full drop-shadow-[0_2px_2px_rgba(0,0,0,0.6)] sm:h-12"
+      />
     </div>
   )
 }

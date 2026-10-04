@@ -52,5 +52,8 @@
     "onnxruntime-node@1.17.3": true,
     "sharp@0.32.6": true,
     "sharp@0.35.4": true
+  },
+  "engines": {
+    "node": ">=22.18.0"
   }
 }
