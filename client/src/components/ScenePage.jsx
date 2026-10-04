@@ -8,16 +8,26 @@ import CarSprite from './CarSprite'
 import CarPickerModal from './CarPickerModal'
 import { fetchCars, fetchPlacements, setPlacement } from '../api/cars'
 
-function SlotCar({ car, flipX }) {
+const DEFAULT_CAR_FILTERS = {
+  konbini:
+    'brightness(0.96) contrast(1.08) saturate(1.15) sepia(0.08) hue-rotate(350deg) drop-shadow(0 4px 6px rgba(0,0,0,0.85)) drop-shadow(0 0 12px rgba(251,191,36,0.20))',
+  garage:
+    'brightness(0.95) contrast(1.06) saturate(1.10) sepia(0.12) hue-rotate(345deg) drop-shadow(0 4px 6px rgba(0,0,0,0.85)) drop-shadow(0 0 10px rgba(245,158,11,0.14))',
+}
+
+function SlotCar({ car, flipX, filter }) {
   return (
     <div
       className={`h-full w-full ${flipX ? '-scale-x-100' : ''}`}
-      style={flipX ? { transform: 'scaleX(-1)' } : undefined}
+      style={{
+        transform: flipX ? 'scaleX(-1)' : undefined,
+        filter: filter ?? 'drop-shadow(0 4px 6px rgba(0,0,0,0.8))',
+      }}
     >
       <CarSprite
         car={car}
         alt={car.name}
-        className="h-full w-full drop-shadow-[0_4px_6px_rgba(0,0,0,0.8)]"
+        className="h-full w-full"
       />
     </div>
   )
@@ -25,6 +35,7 @@ function SlotCar({ car, flipX }) {
 SlotCar.propTypes = {
   car: PropTypes.object.isRequired,
   flipX: PropTypes.bool,
+  filter: PropTypes.string,
 }
 
 /**
@@ -32,7 +43,11 @@ SlotCar.propTypes = {
  * percentages so they stay pinned to the right spot in the artwork as the
  * scene scales.
  */
-function ScenePage({ environmentId, title, blurb, background, slotPositions, effect }) {
+function ScenePage({ environmentId, title, blurb, background, slotPositions, effect, carFilter }) {
+  const activeCarFilter =
+    carFilter ??
+    DEFAULT_CAR_FILTERS[environmentId] ??
+    'drop-shadow(0 4px 6px rgba(0,0,0,0.8))'
   const [cars, setCars] = useState([])
   const [placements, setPlacements] = useState([])
   const [environment, setEnvironment] = useState(null)
@@ -201,7 +216,11 @@ function ScenePage({ environmentId, title, blurb, background, slotPositions, eff
                           title={`${car.name} - click to ${effect === 'wash' ? 'wash' : 'admire'}, double click or tap edit to change`}
                           className="relative h-full w-full cursor-pointer"
                         >
-                          <SlotCar car={car} flipX={Boolean(pos.flipX)} />
+                          <SlotCar
+                            car={car}
+                            flipX={Boolean(pos.flipX)}
+                            filter={activeCarFilter}
+                          />
 
                           {activeEffect === i && effect === 'wash' && (
                             <>
@@ -301,6 +320,7 @@ ScenePage.propTypes = {
     }),
   ).isRequired,
   effect: PropTypes.oneOf(['wash', 'sparkle']).isRequired,
+  carFilter: PropTypes.string,
 }
 
 export default ScenePage
