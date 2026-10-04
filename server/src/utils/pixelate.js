@@ -1,4 +1,4 @@
-﻿import { execFile } from 'node:child_process'
+import { execFile } from 'node:child_process'
 import crypto from 'node:crypto'
 import fs from 'node:fs/promises'
 import os from 'node:os'
@@ -101,19 +101,29 @@ export async function generatePixelArt(imageBuffer, mimeType = 'image/png') {
   }
 
   const ai = new GoogleGenAI({ apiKey })
-  const interaction = await ai.interactions.create({
+  const response = await ai.models.generateContent({
     model: GEMINI_MODEL,
-    input: [
-      { type: 'text', text: PROMPT },
-      { type: 'image', mime_type: mimeType, data: imageBuffer.toString('base64') },
+    contents: [
+      {
+        role: 'user',
+        parts: [
+          { text: PROMPT },
+          { inlineData: { mimeType, data: imageBuffer.toString('base64') } },
+        ],
+      },
     ],
+    config: {
+      responseModalities: ['IMAGE'],
+    },
   })
 
-  const image = interaction?.output_image
-  if (!image?.data) {
+  // The image part sits inside response.candidates[0].content.parts
+  const parts = response?.candidates?.[0]?.content?.parts ?? []
+  const imagePart = parts.find((p) => p.inlineData?.mimeType?.startsWith('image/'))
+  if (!imagePart?.inlineData?.data) {
     throw new Error('Gemini returned no image')
   }
-  return Buffer.from(image.data, 'base64')
+  return Buffer.from(imagePart.inlineData.data, 'base64')
 }
 
 /**
