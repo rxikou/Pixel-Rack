@@ -1,4 +1,4 @@
-﻿import './lib/loadEnv.js'
+import './lib/loadEnv.js'
 
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -44,10 +44,18 @@ app.get('/api/health', (req, res) => {
 // this rather than keeping its own copy of the flag, so the two cannot drift
 // and promise something the API will refuse.
 app.get('/api/config', (req, res) => {
-  const pixelationEnabled = process.env.PIXELATION_ENABLED === 'true'
+  const pixelationEnabled = process.env.PIXELATION_ENABLED !== 'false'
+  const hasGeminiKey = Boolean(
+    process.env.GEMINI_API_KEY &&
+      process.env.GEMINI_API_KEY !== 'placeholder_key',
+  )
   res.json({
     success: true,
-    data: { pixelationEnabled },
+    data: {
+      pixelationEnabled,
+      hasGeminiKey,
+      provider: process.env.PIXELATION_PROVIDER || 'gemini',
+    },
   })
 })
 

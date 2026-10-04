@@ -13,7 +13,7 @@ export const PIXELATION_DISABLED_MESSAGE =
   'Photo transformation is still in the works and is switched off in this demo.'
 
 export function requirePixelation(req, res, next) {
-  if (process.env.PIXELATION_ENABLED === 'true') return next()
+  if (process.env.PIXELATION_ENABLED !== 'false') return next()
 
   res.status(503).json({
     success: false,
