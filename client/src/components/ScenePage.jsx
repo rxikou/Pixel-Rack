@@ -8,16 +8,24 @@ import CarSprite from './CarSprite'
 import CarPickerModal from './CarPickerModal'
 import { fetchCars, fetchPlacements, setPlacement } from '../api/cars'
 
-function SlotCar({ car }) {
+function SlotCar({ car, flipX }) {
   return (
-    <CarSprite
-      car={car}
-      alt={car.name}
-      className="h-full w-full drop-shadow-[0_4px_6px_rgba(0,0,0,0.8)]"
-    />
+    <div
+      className={`h-full w-full ${flipX ? '-scale-x-100' : ''}`}
+      style={flipX ? { transform: 'scaleX(-1)' } : undefined}
+    >
+      <CarSprite
+        car={car}
+        alt={car.name}
+        className="h-full w-full drop-shadow-[0_4px_6px_rgba(0,0,0,0.8)]"
+      />
+    </div>
   )
 }
-SlotCar.propTypes = { car: PropTypes.object.isRequired }
+SlotCar.propTypes = {
+  car: PropTypes.object.isRequired,
+  flipX: PropTypes.bool,
+}
 
 /**
  * A scene with a fixed number of car slots. Slot positions are given as
@@ -193,7 +201,7 @@ function ScenePage({ environmentId, title, blurb, background, slotPositions, eff
                           title={`${car.name} - click to ${effect === 'wash' ? 'wash' : 'admire'}, double click or tap edit to change`}
                           className="relative h-full w-full cursor-pointer"
                         >
-                          <SlotCar car={car} />
+                          <SlotCar car={car} flipX={Boolean(pos.flipX)} />
 
                           {activeEffect === i && effect === 'wash' && (
                             <>
@@ -289,6 +297,7 @@ ScenePage.propTypes = {
       top: PropTypes.string.isRequired,
       width: PropTypes.string.isRequired,
       height: PropTypes.string.isRequired,
+      flipX: PropTypes.bool,
     }),
   ).isRequired,
   effect: PropTypes.oneOf(['wash', 'sparkle']).isRequired,

@@ -5,7 +5,7 @@ import garageBackground from '../assets/garage-background.webp'
 // proportions of the garage tools, roll-up door, and hydraulic lift.
 const SLOTS = [
   { left: '10%', top: '67%', width: '39%', height: '29%' },
-  { left: '52%', top: '67%', width: '39%', height: '29%' },
+  { left: '52%', top: '67%', width: '39%', height: '29%', flipX: true },
 ]
 
 function GaragePage() {
