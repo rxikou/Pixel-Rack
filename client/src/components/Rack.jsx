@@ -3,7 +3,7 @@ import ShelfCarSlot from './ShelfCarSlot'
 import ShelfLabel from './ShelfLabel'
 import EnvironmentScene from './EnvironmentScene'
 
-const ROW_SIZE = 9
+const ROW_SIZE = 5
 
 const ENVIRONMENT_STYLES = {
   rack: {
@@ -87,13 +87,13 @@ function Rack({ cars, environmentId, onDelete }) {
 
               {/* recessed cavity the cars stand inside */}
               <div
-                className={`flex items-end justify-start px-2 pt-7 shadow-[inset_0_14px_18px_-8px_rgba(0,0,0,0.95),inset_6px_0_10px_-8px_rgba(0,0,0,0.8),inset_-6px_0_10px_-8px_rgba(0,0,0,0.8)] ${styles.cavity}`}
+                className={`flex items-end justify-start px-3 pt-6 pb-0.5 sm:px-6 sm:pt-8 shadow-[inset_0_14px_18px_-8px_rgba(0,0,0,0.95),inset_6px_0_10px_-8px_rgba(0,0,0,0.8),inset_-6px_0_10px_-8px_rgba(0,0,0,0.8)] ${styles.cavity}`}
               >
                 {row.map((car) => (
                   <div
                     key={car.id}
                     style={{ width: `${100 / ROW_SIZE}%` }}
-                    className="shrink-0 px-0.5"
+                    className="shrink-0 px-2 sm:px-3.5"
                   >
                     <ShelfCarSlot car={car} onDelete={onDelete} />
                   </div>
