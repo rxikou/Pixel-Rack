@@ -8,19 +8,18 @@ import uploadIcon from '../assets/icons/upload.png'
 import { useAuth } from '../context/AuthContext'
 
 const NAV_LINKS = [
-  { to: '/', label: 'Home', icon: houseIcon },
-  { to: '/dashboard', label: 'My Rack', icon: rackIcon },
-  { to: '/garage', label: 'Garage', icon: garageIcon },
-  { to: '/konbini', label: 'Konbini', icon: konbiniIcon },
+  { to: '/', label: 'HOME', icon: houseIcon },
+  { to: '/dashboard', label: 'MY RACK', icon: rackIcon },
+  { to: '/garage', label: 'GARAGE', icon: garageIcon },
+  { to: '/konbini', label: 'KONBINI', icon: konbiniIcon },
 ]
 
 const navItemClass = (active) =>
-  // Against the solid blue bar, grey-on-blue reads poorly; white with an
-  // amber active state gives the high-contrast pop the reference UI uses.
-  `pixel-text flex flex-col items-center gap-1 border-b-[3px] pb-1 ${
+  // Clean, crisp typography without heavy multi-pixel text-shadow to prevent double-printed ghosting
+  `flex flex-col items-center gap-1 border-b-[3px] pb-1 font-bold uppercase tracking-wider transition-colors ${
     active
-      ? 'border-amber-400 text-amber-300'
-      : 'border-transparent text-white/85 hover:text-amber-200'
+      ? 'border-amber-400 text-amber-300 drop-shadow-[0_1px_1px_rgba(0,0,0,0.85)]'
+      : 'border-transparent text-white/90 hover:text-amber-200'
   }`
 
 function Navbar() {
@@ -73,7 +72,7 @@ function Navbar() {
             className={`cursor-pointer ${navItemClass(false)}`}
           >
             <img src={uploadIcon} alt="" className="pixelated h-6 w-6 sm:h-8 sm:w-8" />
-            <span>Upload</span>
+            <span>UPLOAD</span>
           </button>
         </nav>
       </div>
