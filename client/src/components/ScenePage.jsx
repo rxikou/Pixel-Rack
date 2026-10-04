@@ -12,7 +12,7 @@ function SlotCar({ car }) {
     <CarSprite
       car={car}
       alt={car.name}
-      className="h-full w-full drop-shadow-[0_3px_3px_rgba(0,0,0,0.7)]"
+      className="h-full w-full drop-shadow-[0_4px_6px_rgba(0,0,0,0.8)]"
     />
   )
 }

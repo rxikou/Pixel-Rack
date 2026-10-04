@@ -1,11 +1,11 @@
 import ScenePage from '../components/ScenePage'
 import garageBackground from '../assets/garage-background.webp'
 
-// Pinned to the open concrete in the artwork: below the workbenches and
-// tool chests, left of the car lift ramps.
+// Pinned to the open concrete in the artwork, scaled up to match the
+// proportions of the garage tools, roll-up door, and hydraulic lift.
 const SLOTS = [
-  { left: '19%', top: '78%', width: '27%', height: '19%' },
-  { left: '50%', top: '78%', width: '27%', height: '19%' },
+  { left: '10%', top: '67%', width: '39%', height: '29%' },
+  { left: '52%', top: '67%', width: '39%', height: '29%' },
 ]
 
 function GaragePage() {
